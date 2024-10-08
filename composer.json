@@ -1,0 +1,30 @@
+{
+    "name": "hexlet/code",
+    "description": "gendiff project",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vsevolod Petrov",
+            "email": "vsev92@mail.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "docopt/docopt": "dev-master"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "4.0.x-dev"
+    },
+    "autoload": {
+        "files": [
+                    "src/Main.php"
+   
+       ]    
+    },
+    "bin": [
+        "gendiff"
+
+    ]
+
+}

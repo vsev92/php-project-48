@@ -1,0 +1,26 @@
+#!/usr/bin/env php
+<?php
+
+$autoloadPath1 = __DIR__ . '/../../../autoload.php';
+$autoloadPath2 = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($autoloadPath1)) {
+    require_once $autoloadPath1;
+} else {
+    require_once $autoloadPath2;
+}
+//BrainGames\Games\Calc\runGame();
+/*$doc = <<<DOC
+Usage:
+gendiff (-h|--help)
+gendiff (-v|--version)
+
+ptions:
+-h --help                     Show this screen
+-v --version                  Show version
+
+DOC;*/
+$doc = file_get_contents("./src/doc.md");
+$args = (new \Docopt\Handler)->handle($doc);
+
+
+//Gendiff\main();
