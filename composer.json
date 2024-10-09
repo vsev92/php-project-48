@@ -23,7 +23,7 @@
        ]    
     },
     "bin": [
-        "gendiff"
+        "bin/gendiff"
 
     ]
 

@@ -8,19 +8,16 @@ if (file_exists($autoloadPath1)) {
 } else {
     require_once $autoloadPath2;
 }
-//BrainGames\Games\Calc\runGame();
-/*$doc = <<<DOC
-Usage:
-gendiff (-h|--help)
-gendiff (-v|--version)
 
-ptions:
--h --help                     Show this screen
--v --version                  Show version
-
-DOC;*/
-$doc = file_get_contents("./src/doc.md");
+$docPath = __DIR__ . '/../src/doc.md';
+$doc = file_get_contents($docPath);
 $args = (new \Docopt\Handler)->handle($doc);
 
+//echo($args['<firstFile>']);
+
+//echo(" ");
+//echo($args['<secondFile>']);
+///echo(" ");
+//echo($args['--format']);
 
 //Gendiff\main();
