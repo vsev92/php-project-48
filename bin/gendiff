@@ -9,15 +9,15 @@ if (file_exists($autoloadPath1)) {
     require_once $autoloadPath2;
 }
 
+use Gendiff\Parser;
+use Gendiff\Diff;
+
 $docPath = __DIR__ . '/../src/doc.md';
 $doc = file_get_contents($docPath);
 $args = (new \Docopt\Handler)->handle($doc);
 
-//echo($args['<firstFile>']);
+$pathToFile1= $args['<firstFile>'];
+$pathToFile2= $args['<secondFile>'];
 
-//echo(" ");
-//echo($args['<secondFile>']);
-///echo(" ");
-//echo($args['--format']);
-
-//Gendiff\main();
+$diff = Gendiff\Diff\genDiff($pathToFile1, $pathToFile2);
+print_r($diff);

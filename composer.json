@@ -18,7 +18,9 @@
     },
     "autoload": {
         "files": [
-                    "src/Main.php"
+                    "src/Parser.php",
+                    "src/Diff.php",
+                    "src/Run.php"
    
        ]    
     },
