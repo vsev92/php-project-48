@@ -21,7 +21,7 @@
         "files": [
                     "src/Parser.php",
                     "src/Diff.php",
-                    "src/Run.php"
+                    "tests/genDiffTest.php"
    
        ]    
     },

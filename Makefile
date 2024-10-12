@@ -2,8 +2,8 @@ install:
 	composer install
 gendiff:
 	./bin/gendiff
-gendiffh:
-	./bin/gendiff -h
+testCov:
+	XDEBUG_MODE=coverage composer exec --verbose phpunit tests -- --coverage-html ./tests/reports --coverage-filter ./src
 validate:
 	composer validate
 lint:
