@@ -14,7 +14,8 @@
         "docopt/docopt": "dev-master"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "4.0.x-dev"
+        "squizlabs/php_codesniffer": "4.0.x-dev",
+        "phpunit/phpunit": "^12.0@dev"
     },
     "autoload": {
         "files": [
