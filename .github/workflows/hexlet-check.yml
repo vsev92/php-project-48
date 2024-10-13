@@ -22,6 +22,8 @@ jobs:
         uses: hexlet/project-action@release
         with:
           hexlet-id: ${{ secrets.HEXLET_ID }}
+      - name: presets
+        run: make install
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
         env:
