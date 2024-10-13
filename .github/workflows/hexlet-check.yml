@@ -22,10 +22,10 @@ jobs:
         uses: hexlet/project-action@release
         with:
           hexlet-id: ${{ secrets.HEXLET_ID }}
-      - name: presets
-        
+      - name: presets   
         run: composer update
-             make install
+      - name: presets2
+         run: make install
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
         env:
