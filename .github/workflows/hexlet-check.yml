@@ -24,7 +24,7 @@ jobs:
           hexlet-id: ${{ secrets.HEXLET_ID }}
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
-         env:
+        env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageCommand: test-coverage-clover
