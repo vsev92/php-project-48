@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1728722952">
-  <project timestamp="1728722952">
+<coverage generated="1728822821">
+  <project timestamp="1728822821">
     <file name="/home/vsev92/projects/DifferenceCalculator/php-project-48/src/Diff.php">
       <line num="9" type="stmt" count="1"/>
       <line num="10" type="stmt" count="1"/>
