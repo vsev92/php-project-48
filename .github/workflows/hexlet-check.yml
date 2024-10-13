@@ -23,6 +23,7 @@ jobs:
         with:
           hexlet-id: ${{ secrets.HEXLET_ID }}
       - name: presets
+        run: composer update
         run: make install
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
