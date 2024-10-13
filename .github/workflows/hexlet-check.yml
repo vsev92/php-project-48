@@ -25,7 +25,7 @@ jobs:
       - name: presets   
         run: composer update
       - name: presets2
-         run: make install
+        run: make install
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
         env:
