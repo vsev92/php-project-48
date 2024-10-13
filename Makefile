@@ -3,7 +3,7 @@ install:
 gendiff:
 	./bin/gendiff
 test-coverage-clover:
-	XDEBUG_MODE=coverage composer exec --verbose phpunit tests -- --coverage-clover ./build/logs/clover.xml 
+	XDEBUG_MODE=coverage composer exec --verbose phpunit tests -- --coverage-clover ./build/logs/clover.xml --coverage-filter ./src
 test-coverage-html:
 	XDEBUG_MODE=coverage composer exec --verbose phpunit tests -- --coverage-html ./build/reports --coverage-filter ./src
 validate:
