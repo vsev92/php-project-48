@@ -27,7 +27,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          coverageCommand: test-coverage-clover
+          coverageCommand: make test-coverage-clover
           coverageLocations: build/logs/clover.xml:clover
           debug: true
 
