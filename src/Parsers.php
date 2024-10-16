@@ -36,7 +36,7 @@ function parseFromFile(string $filePath, SourceType $sourceFileType)
 function getSourceType($filePath) {
     if (str_ends_with($filePath, '.json')) {
         return SourceType::json;
-    } elseif (str_ends_with($filePath, '.yml')) {
+    } elseif (str_ends_with($filePath, '.yml') || str_ends_with($filePath, '.yaml')) { 
         return SourceType::yaml;
     } else {
         return SourceType::unsupported;

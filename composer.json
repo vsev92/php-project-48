@@ -20,7 +20,7 @@
     },
     "autoload": {
         "files": [
-                    "src/Parser.php",
+                    "src/Parsers.php",
                     "src/Diff.php",
                     "tests/genDiffTest.php"
    
