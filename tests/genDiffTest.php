@@ -2,10 +2,11 @@
 
 use PHPUnit\Framework\TestCase;
 use Gendiff\Diff;
+use Gendiff\Parser\SourceType;
 
 class genDiffTest extends TestCase
 {
-    public function test1genDiffJson(): void
+    public function testgenDiffJson(): void
     {
       
         $pathToFile1 =  __DIR__ . '/fixtures/TestCompareJson/file1.json';
@@ -17,7 +18,7 @@ class genDiffTest extends TestCase
 
     }
 
-    public function test1genDiffYaml(): void
+    public function testgenDiffYaml(): void
     {
       
         $pathToFile1 =  __DIR__ . '/fixtures/TestCompareYaml/file1.yml';
@@ -28,5 +29,36 @@ class genDiffTest extends TestCase
         $this->assertEquals($expected , $diff);
 
     }
+
+    public function testgenDiffUnsupported(): void
+    {
+      
+        $pathToFile1 =  __DIR__ . '/fixtures/TestCompareUnsupported/file1.txt';
+        $pathToFile2 =  __DIR__ . '/fixtures/TestCompareUnsupported/file2.yml';
+        $this->expectException(Error::class);
+        Gendiff\Diff\genDiff($pathToFile1, $pathToFile2);
+
+    }
+
+    public function testParseFromFile(): void
+    {
+      
+        $pathToFile1 =  __DIR__ . '/fixtures/TestCompareUnsupported/file123.json';
+        $type = \Gendiff\Parser\getSourceType($pathToFile1);
+        $this->expectException(InvalidArgumentException::class);
+        \Gendiff\Parser\parseFromFile($pathToFile1, $type);
+
+
+        $pathToFile2 =  __DIR__ . '/fixtures/TestCompareUnsupported/file2.txt';
+        $type = \Gendiff\Parser\getSourceType($pathToFile2);
+        $this->expectException(InvalidArgumentException::class);
+        \Gendiff\Parser\parseFromFile($pathToFile2, $type);
+
+
+    }
+
+
+
+    
 }
 
