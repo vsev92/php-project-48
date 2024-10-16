@@ -11,7 +11,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "docopt/docopt": "dev-master"
+        "docopt/docopt": "dev-master",
+        "symfony/yaml": "7.2.x-dev"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "4.0.x-dev",

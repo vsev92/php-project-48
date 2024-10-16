@@ -1,16 +1,45 @@
 <?php
 
 namespace Gendiff\Parser;
+use Symfony\Component\Yaml\Yaml;
 use InvalidArgumentException;
 
-function parseJsonFile(string $path)
+enum SourceType
 {
-    if (file_exists($path)) {
-        $json = file_get_contents($path);
-        return json_decode($json, true);
+    case json;
+    case yaml;
+    case unsupported;
+}
+
+function parseFromFile(string $filePath, SourceType $sourceFileType)
+{
+    
+    if (file_exists($filePath)) {
+
+
+        $data = file_get_contents($filePath);
+
+        switch ($sourceFileType) {
+            case SourceType::json:
+                return json_decode($data, true);
+            case SourceType::yaml:
+                return Yaml::parse($data);
+            default:
+                throw new InvalidArgumentException('wrong file extension' . $filePath);
+        }
     } else {
-        throw new InvalidArgumentException('wrong filename ' . $path);
+        throw new InvalidArgumentException('wrong filename ' . $filePath);
     }
     
+}
+
+function getSourceType($filePath) {
+    if (str_ends_with($filePath, '.json')) {
+        return SourceType::json;
+    } elseif (str_ends_with($filePath, '.yml')) {
+        return SourceType::yaml;
+    } else {
+        return SourceType::unsupported;
+    }
 }
 

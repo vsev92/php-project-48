@@ -19,6 +19,7 @@ $args = (new \Docopt\Handler)->handle($doc);
 $pathToFile1= $args['<firstFile>'];
 $pathToFile2= $args['<secondFile>'];
 
+
 $diff = Gendiff\Diff\genDiff($pathToFile1, $pathToFile2);
 
 print_r($diff);
