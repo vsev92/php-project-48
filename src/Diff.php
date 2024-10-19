@@ -65,16 +65,16 @@ function getDiffByKey($key, $collection1, $collection2) {
         } else {
                 if (!$ExistInCollection1) {
                         if (is_array($collection2[$key])) {
-                                
-                                $diff [] = ['sign' => '+ ', 'key' => $key, 'valueRaw'=> $collection2[$key]];
+                                $value = getDiffColFromAssoc($collection2[$key]);
+                                $diff [] = ['sign' => '+ ', 'key' => $key, 'value'=> $value];
                         } else {
                                 $diff [] = ['sign' => '+ ', 'key' => $key, 'value'=> $collection2[$key]];
                         }       
                 }
                 if (!$ExistInCollection2) {
                         if (is_array($collection1[$key])) {
-                            
-                                $diff [] = ['sign' => '- ', 'key' => $key, 'valueRaw'=> $collection1[$key]];
+                                $value = getDiffColFromAssoc($collection1[$key]);
+                                $diff [] = ['sign' => '- ', 'key' => $key, 'value'=> $value];
                         } else {
                                 $diff [] = ['sign' => '- ', 'key' => $key, 'value'=> $collection1[$key]];
                         }
@@ -86,6 +86,16 @@ function getDiffByKey($key, $collection1, $collection2) {
      
         return $diff;
   
+}
+
+function getDiffColFromAssoc($array) {
+        $keys = array_keys($array);
+        return  array_map(function($key){
+                $value = is_array($array[$key]) ? getDiffColFromAssoc($array[$key]) : $array[$key];
+                ['sign' => '  ', 'key' => $key, 'value'=> $value];
+                
+        },$keys);
+        
 }
 
 

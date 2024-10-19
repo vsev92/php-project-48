@@ -6,80 +6,31 @@ use  Symfony\Component\Yaml\Yaml;
 
 
 
-function getStylishFormat($firstIteration, $name, $diffCol, $debt, $spaceCountPerLevel, $offsetToLeft) {
-        //$debt = 1;
-        //$spaceCountPerLevel = 4;
-        //$offsetToLeft = 2;
-       
-        $name = $name ==='' ? $name : $name . ": ";
-        $elements = array_reduce($diffCol, function($acc, $diff) use ($debt, $spaceCountPerLevel, $offsetToLeft) {
+
+
+function getStylishFromDiffCol($diffCol, $debt) {
+
+        $braceMargin = getMarginLeft(($debt - 1),  4, 0);
+        $elements = array_reduce($diffCol, function($acc, $diff) use ($debt) {
                
                
-                $elementMarginLeft = getMarginLeft($debt, $spaceCountPerLevel, $offsetToLeft);
-             
+                
+                $margin = getMarginLeft($debt, 4, 2);
                 if (is_array($diff['value'])) {
-                        
-                        $debtOnNextLevel = $debt + 1;
-                        $spaceCountOnNextLevel = $spaceCountPerLevel + 4;
-                        $offsetToLeft = $firstIteration ? $offsetToLeft + 2 : $offsetToLeft;
-        
-                        $acc = $acc . getStylishFormat(false, $diff['key'], $diff['value'], $debtOnNextLevel, $spaceCountOnNextLevel, $offsetToLeft);                       
+                       
+                        $acc = $acc . $margin . $diff['sign'] . $diff['key'] . ": " . getStylishFromDiffCol($diff['value'], ($debt+1));
+    
+                                
                 } else {
-                        $acc  = $acc . $elementMarginLeft . $diff['sign'] . $diff['key']. ": " . Yaml::dump($diff['value']) . "\n";
+
+                        
+                        $acc  = $acc . $margin . $diff['sign'] . $diff['key'] . ": " . Yaml::dump($diff['value']) . "\n";
                 }
                 
                 return $acc;
         },'');
-        
-        $openBraceMarginLeft = getMarginLeft($debt, $spaceCountPerLevel, $offsetToLeft);
-        $closeBraceMarginLeft = getMarginLeft($debt, $spaceCountPerLevel, $offsetToLeft);
-        if ($firstIteration) {
-                $stylish ="{\n" .  $elements . "}";
-
-        } else {
-                $stylish = $openBraceMarginLeft . $name . "{\n" .  $elements . $closeBraceMarginLeft . "}\n";
-        }
-        
+        $stylish =  "{\n" . $elements . $braceMargin  ."}\n";
         return $stylish;
-
-
-}
-
-function getStylishFromDiff($diffCol, $debt, $spaceCountPerLevel, $offsetToLeft) {
-
-       
-        $name = $name ==='' ? $name : $name . ": ";
-        $elements = array_reduce($diffCol, function($acc, $diff) use ($debt, $spaceCountPerLevel, $offsetToLeft) {
-               
-               
-                $elementMarginLeft = getMarginLeft($debt, $spaceCountPerLevel, $offsetToLeft);
-             
-                if (is_array($diff['value'])) {
-                        
-                        $debtOnNextLevel = $debt + 1;
-                        $spaceCountOnNextLevel = $spaceCountPerLevel + 4;
-                        $offsetToLeft = $firstIteration ? $offsetToLeft + 2 : $offsetToLeft;
-        
-                        $acc = $acc . getStylishFormat(false, $diff['key'], $diff['value'], $debtOnNextLevel, $spaceCountOnNextLevel, $offsetToLeft);                       
-                } else {
-                        $acc  = $acc . $elementMarginLeft . $diff['sign'] . $diff['key']. ": " . Yaml::dump($diff['value']) . "\n";
-                }
-                
-                return $acc;
-        },'');
-        
-        $openBraceMarginLeft = getMarginLeft($debt, $spaceCountPerLevel, $offsetToLeft);
-        $closeBraceMarginLeft = getMarginLeft($debt, $spaceCountPerLevel, $offsetToLeft);
-        if ($firstIteration) {
-                $stylish ="{\n" .  $elements . "}";
-
-        } else {
-                $stylish = $openBraceMarginLeft . $name . "{\n" .  $elements . $closeBraceMarginLeft . "}\n";
-        }
-        
-        return $stylish;
-
-
 }
 
 
@@ -90,7 +41,7 @@ function getMarginLeft($debt, $spaceCountPerLevel, $offsetToLeft) {
 
 }
 
-
+/*
 function getStylishFromRawCol($collection, $debt) 
 {
         
@@ -118,7 +69,7 @@ function getStylishFromRawCol($collection, $debt)
         return $stylish;
 
 }
-
+*/
 
 
 

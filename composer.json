@@ -14,6 +14,11 @@
         "docopt/docopt": "dev-master",
         "symfony/yaml": "7.2.x-dev"
     },
+    "autoload-dev": {
+    "psr-4": {
+      "Gendiff\\": "tests/"
+    }
+  },
     "require-dev": {
         "squizlabs/php_codesniffer": "4.0.x-dev",
         "phpunit/phpunit": "^12.0@dev"
@@ -22,8 +27,14 @@
         "files": [
                     "src/Parsers.php",
                     "src/Diff.php",
-                    "tests/genDiffTest.php"
-   
+                    "src/Formatters.php"
+
+
+       
+    
+
+
+ 
        ]    
     },
     "bin": [
