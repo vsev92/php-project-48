@@ -1,7 +1,7 @@
 <?php
 
 namespace Gendiff\Formatters;
-use  Symfony\Component\Yaml\Yaml;
+
 
 
 
@@ -13,20 +13,17 @@ function getStylishFromDiffCol($diffCol, $debt) {
         $braceMargin = getMarginLeft(($debt - 1),  4, 0);
         $elements = array_reduce($diffCol, function($acc, $diff) use ($debt) {
                
-               
+ 
                 
                 $margin = getMarginLeft($debt, 4, 2);
-                if (is_array($diff['value'])) {
-                       
-                        $acc = $acc . $margin . $diff['sign'] . $diff['key'] . ": " . getStylishFromDiffCol($diff['value'], ($debt+1));
-    
-                                
-                } else {
+                $ValueIsArray = is_array($diff['value']);
+                $value = $ValueIsArray ? getStylishFromDiffCol($diff['value'], ($debt+1)) : getStylishValueEncode($diff['value']);
+                $spaceBeforeValue = mb_strlen($value) > 0 ? ' ' : '';
+                $symbolAfterValue = $ValueIsArray ? '' : "\n";
 
-                        
-                        $acc  = $acc . $margin . $diff['sign'] . $diff['key'] . ": " . Yaml::dump($diff['value']) . "\n";
-                }
-                
+                $acc  = $acc . $margin . $diff['sign'] . $diff['key'] . ":" . $spaceBeforeValue . $value . $symbolAfterValue;
+               
+
                 return $acc;
         },'');
         $stylish =  "{\n" . $elements . $braceMargin  ."}\n";
@@ -41,35 +38,24 @@ function getMarginLeft($debt, $spaceCountPerLevel, $offsetToLeft) {
 
 }
 
-/*
-function getStylishFromRawCol($collection, $debt) 
-{
-        
-        $braceMargin = getMarginLeft(($debt - 1),  4, 0);
-        $keys = array_keys($collection);
-        $elements = array_reduce($keys, function($acc, $key) use ($collection, $debt) {
-               
-               
-                
-                $margin = getMarginLeft($debt, 4, 2);
-                if (is_array($collection[$key])) {
-                       
-                        $acc = $acc . $margin . "  " . $key . ": " . getStylishFromCol($collection[$key], ($debt+1));
-    
-                                
-                } else {
-
-                        
-                        $acc  = $acc . $margin . "  " . $key . ": " . Yaml::dump($collection[$key]) . "\n";
-                }
-                
-                return $acc;
-        },'');
-        $stylish =  "{\n" . $elements . $braceMargin  ."}\n";
-        return $stylish;
+function getStylishValueEncode($value) {
+        $type = gettype($value);
+        switch ($type) {
+                case "boolean":
+                    return $value ? "true" : "false";
+                    break;
+                case "NULL":
+                    return "null";
+                    break;
+                default:
+                    return  $value;
+                    break;
+            }
+   
 
 }
-*/
+
+
 
 
 

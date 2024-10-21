@@ -17,21 +17,6 @@ function getUniqueKeys($Collection1, $Collection2) {
          
 }
 
-function getValueByKey($collection, $key, SourceType $type) {
-
-        switch ($type) {
-                case   SourceType::json:
-                   // return json_encode($collection[$key]);
-                   return Yaml::dump($collection[$key]);
-                case   SourceType::yaml:
-                    return Yaml::dump($collection[$key]);
-                default:
-                    throw new InvalidArgumentException('Unsupported type' . $type);
-        }
-
-}
-        
-
 
 
 
@@ -45,21 +30,28 @@ function getDiffByKey($key, $collection1, $collection2) {
    
         $ExistInCollection1 = array_key_exists($key,$collection1);
         $ExistInCollection2 = array_key_exists($key,$collection2);
+        $ValueIsArray1 = is_array($collection1[$key]);
+        $ValueIsArray2 = is_array($collection2[$key]);
 
         
         if ($ExistInCollection1 && $ExistInCollection2) {
-                if (is_array($collection1[$key]) && is_array($collection2[$key]))
+                if ($ValueIsArray1 && $ValueIsArray2)
                 {
                         $diffByColl = getDiffByCollection($collection1[$key], $collection2[$key]);
                         $diff [] = ['sign' => '  ', 'key' => $key, 'value'=> $diffByColl]; 
 
-                } else {
+                } elseif (!$ValueIsArray1 && !$ValueIsArray2) {
                         if ($collection1[$key] === $collection2[$key]) {
                                 $diff [] = ['sign' => '  ', 'key' => $key, 'value'=> $collection1[$key]]; 
                         } else {
                                 $diff [] = ['sign' => '- ', 'key' => $key, 'value'=> $collection1[$key]];
                                 $diff [] = ['sign' => '+ ', 'key' => $key, 'value'=> $collection2[$key]];  
                         }
+                } else {
+                        $value1 = $ValueIsArray1 ? getDiffColFromAssoc($collection1[$key]) : $collection1[$key];
+                        $value2 = $ValueIsArray2 ? getDiffColFromAssoc($collection2[$key]) : $collection2[$key];
+                        $diff [] = ['sign' => '- ', 'key' => $key, 'value'=> $value1];
+                        $diff [] = ['sign' => '+ ', 'key' => $key, 'value'=> $value2]; 
                 }
                 
         } else {
@@ -90,9 +82,9 @@ function getDiffByKey($key, $collection1, $collection2) {
 
 function getDiffColFromAssoc($array) {
         $keys = array_keys($array);
-        return  array_map(function($key){
+        return  array_map(function($key) use ($array) {
                 $value = is_array($array[$key]) ? getDiffColFromAssoc($array[$key]) : $array[$key];
-                ['sign' => '  ', 'key' => $key, 'value'=> $value];
+                return ['sign' => '  ', 'key' => $key, 'value'=> $value];
                 
         },$keys);
         
