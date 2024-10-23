@@ -2,9 +2,9 @@
     common: {
       - setting4: true
       + setting4: blah blah
-      - setting5: {
-        - key: value
-        + key5: value5
+        setting5: {
+          - key: value
+          + key5: value5
         }
     }
 }
