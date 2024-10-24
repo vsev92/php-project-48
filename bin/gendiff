@@ -16,10 +16,14 @@ $docPath = __DIR__ . '/../src/doc.md';
 $doc = file_get_contents($docPath);
 $args = (new \Docopt\Handler)->handle($doc);
 
-$pathToFile1= $args['<firstFile>'];
-$pathToFile2= $args['<secondFile>'];
+$pathToFile1 = $args['<firstFile>'];
+$pathToFile2 = $args['<secondFile>'];
+$formatName = $args['--format'];
 
 
-$diff = Gendiff\Diff\genDiff($pathToFile1, $pathToFile2);
+$diff = Gendiff\Diff\genDiff($pathToFile1, $pathToFile2, $formatName);
 
 print_r($diff);
+
+
+  

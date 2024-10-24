@@ -5,6 +5,23 @@ use Gendiff\Diff;
 use Gendiff\Diff\PropertyDifference;
 
 
+function getFormattedDifference($diffCol, $formatName) {
+        switch ($formatName) {
+                case "plain":
+                    return getPlainFromDiffCol($diffCol, "");
+                    break;
+                case "stylish":
+                    return getStylishFromDiffCol($diffCol, 1);
+                    break;
+                case "json":
+                        getJsonFromDiffCol($diffCol, 1);
+                        break;    
+                default:
+                    throw new InvalidArgumentException('Unsupported format name');
+            }
+}  
+
+
 function getStylishFromFirstValueOfDiff($diff, $diffStatusSymbol, $debt) {
         $key = \Gendiff\Diff\getKey($diff);
         $margin = getMarginLeft($debt, 4, 2);
@@ -177,29 +194,31 @@ function getStylishValueEncode($value) {
 
 function getPlainFromDiffCol($diffCol, $name) {
         $plain = array_reduce($diffCol, function($acc, $diff) use ($name) {
-                $name = $name . "." . \Gendiff\Diff\getKey($diff);
+                $key = \Gendiff\Diff\getKey($diff);
+                $name = $name === '' ? $key : $name . "." . $key;
                 $diffStatus = \Gendiff\Diff\getPropertyDifference($diff);
+                $plain = '';
                 switch ($diffStatus) {
                         case PropertyDifference:: none:
                             break;
                         case PropertyDifference::added:
-                            $output = getPlainForAdded($diff, $name);
+                            $plain = getPlainForAdded($diff, $name);
                             break;
                         case PropertyDifference::removed:
-                            $output = getPlainForRemoved($name);
+                            $plain = getPlainForRemoved($name);
                             break;
                         case PropertyDifference::updated:
-                            $output= getPlainForUpdated($diff, $name);
+                            $plain= getPlainForUpdated($diff, $name);
                             break;
                         case PropertyDifference::complexDifference:
                             $child = \Gendiff\Diff\getChild($diff);
-                            $output = getPlainFromDiffCol($child, $name); 
+                            $plain = getPlainFromDiffCol($child, $name); 
                             break;
                         default:
                             break;
                     }
 
-                       $acc  = $acc . $output;
+                       $acc  = $acc . $plain;
                        return $acc;
         },'');
 
@@ -210,20 +229,53 @@ function getPlainFromDiffCol($diffCol, $name) {
 function getPlainForAdded($diff, $propertyName) {
 
         $value  = \Gendiff\Diff\getSecondValue($diff);
-        return "Property {$propertyName} was added with value: {$value}\n";
+        $value = getPlainValueEncode($value);
+        return "Property '{$propertyName}' was added with value: {$value}\n";
 }
 
 function getPlainForRemoved($propertyName) {
 
-        return "Property {$propertyName} was removed.\n";
+        return "Property '{$propertyName}' was removed\n";
 }
 
 
 
 function getPlainForUpdated($diff, $propertyName) {
         $value1  = \Gendiff\Diff\getFirstValue($diff);
+        $value1 = getPlainValueEncode($value1);
         $value2 = \Gendiff\Diff\getSecondValue($diff);
-        return "Property {$propertyName} was updated. From {$value1} to {$value2}\n";
+        $value2 = getPlainValueEncode($value2);
+        return "Property '{$propertyName}' was updated. From {$value1} to {$value2}\n";
+}
+
+function getPlainValueEncode($value) {
+        $type = gettype($value);
+        switch ($type) {
+                case "boolean":
+                    return $value ? "true" : "false";
+                    break;
+                case "NULL":
+                    return "null";
+                    break;
+                case "array":
+                        return "[complex value]";
+                        break;
+                case "string":
+                        return "'{$value}'";
+                        break; 
+                                   
+                default:
+                    return  $value;
+                    break;
+            }
+   
+
 }
 
 
+ 
+
+function getJsonFromDiffCol($diffCol, $debt) 
+{
+        return null;
+}

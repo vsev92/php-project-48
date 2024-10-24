@@ -8,6 +8,30 @@ use  Symfony\Component\Yaml\Yaml;
 use  Exception;
 
 
+function genDiff($pathToFile1, $pathToFile2, $formatName) {
+
+        $sourceType1 = \Gendiff\Parser\getSourceType($pathToFile1);
+        $sourceType2 = \Gendiff\Parser\getSourceType($pathToFile2);
+
+      
+        $collection1 = \Gendiff\Parser\parseFromFile($pathToFile1, $sourceType1);
+        $collection2  = \Gendiff\Parser\parseFromFile($pathToFile2, $sourceType2);
+       
+        
+
+        $diffCol = getDiffByCollection($collection1, $collection2);
+        
+        
+        
+        return \Gendiff\Formatters\getFormattedDifference($diffCol, $formatName);
+} 
+
+
+
+
+
+
+
 function getUniqueKeys($Collection1, $Collection2) {
         $keys1 = array_keys($Collection1);
         $keys2 = array_keys($Collection2);
@@ -31,8 +55,8 @@ function getDiffByKey($key, $collection1, $collection2) {
    
         $ExistInCollection1 = array_key_exists($key,$collection1);
         $ExistInCollection2 = array_key_exists($key,$collection2);
-        $ValueIsArray1 = is_array($collection1[$key]);
-        $ValueIsArray2 = is_array($collection2[$key]);
+        $ValueIsArray1 = $ExistInCollection1 && is_array($collection1[$key]);
+        $ValueIsArray2 = $ExistInCollection2 && is_array($collection2[$key]);
 
         
         if ($ExistInCollection1 && $ExistInCollection2) {
@@ -249,24 +273,7 @@ function getDiffByCollection($collection1, $collection2)
 
 }
 
-function genDiff($pathToFile1, $pathToFile2) {
-
-        $sourceType1 = \Gendiff\Parser\getSourceType($pathToFile1);
-        $sourceType2 = \Gendiff\Parser\getSourceType($pathToFile2);
-
-      
-        $collection1 = \Gendiff\Parser\parseFromFile($pathToFile1, $sourceType1);
-        $collection2  = \Gendiff\Parser\parseFromFile($pathToFile2, $sourceType2);
-       
-        
-
-        $diffByColl = getDiffByCollection($collection1, $collection2);
-        
-        
-        
-        return \Gendiff\Formatters\getStylishFormat(true, '', $diffByColl, 0, 0, 2);
-}                                  
-
+                                 
 
 
 
