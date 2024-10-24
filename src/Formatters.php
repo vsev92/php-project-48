@@ -1,196 +1,27 @@
 <?php
 
 namespace Gendiff\Formatters;
+
 use Gendiff\Diff;
 use Gendiff\Diff\PropertyDifference;
-
+use Exception;
 
 function getFormattedDifference($diffCol, $formatName) {
         switch ($formatName) {
                 case "plain":
                     return getPlainFromDiffCol($diffCol, "");
-                    break;
                 case "stylish":
-                    return getStylishFromDiffCol($diffCol, 1);
-                    break;
+                    return getNestedFormatFromDiffCol($diffCol, 'stylish', 1);
                 case "json":
-                        getJsonFromDiffCol($diffCol, 1);
-                        break;    
+                        return getNestedFormatFromDiffCol($diffCol, 'json', 1);
                 default:
                     throw new InvalidArgumentException('Unsupported format name');
-            }
+        }
 }  
 
 
-function getStylishFromFirstValueOfDiff($diff, $diffStatusSymbol, $debt) {
-        $key = \Gendiff\Diff\getKey($diff);
-        $margin = getMarginLeft($debt, 4, 2);
-        $value  = \Gendiff\Diff\getFirstValue($diff);
-        $spaceBeforeValue = $value === '' ? '' : ' ';
-        $isComplex = \Gendiff\Diff\isFirstValueComplex($diff);
-        $stylishValue = $isComplex ? getStylishFromComplexValue($value, ($debt + 1)) : getStylishValueEncode($value);
-        $symbolAfterValue = $isComplex ? '' : "\n";
-        $stylish  = $margin . $diffStatusSymbol . $key  . ":" . $spaceBeforeValue . $stylishValue  . $symbolAfterValue;
-        return $stylish;
 
-}
-
-function getStylishFromSecondValueOfDiff($diff, $diffStatusSymbol, $debt) {
-        $key = \Gendiff\Diff\getKey($diff);
-        $margin = getMarginLeft($debt, 4, 2);
-        $value  = \Gendiff\Diff\getSecondValue($diff);
-        $spaceBeforeValue = $value === '' ? '' : ' ';
-        $isComplex = \Gendiff\Diff\isSecondValueComplex($diff);
-        $stylishValue = $isComplex ? getStylishFromComplexValue($value, ($debt + 1)) : getStylishValueEncode($value);
-        $symbolAfterValue = $isComplex ? '' : "\n";
-        $stylish  = $margin . $diffStatusSymbol . $key  . ":" . $spaceBeforeValue . $stylishValue  . $symbolAfterValue;
-        return $stylish;
-
-}
-
-
-function getStylishForAdded($diff, $debt) {
-        $diffStatusSymbol = '+ ';
-        $stylish  = getStylishFromSecondValueOfDiff($diff, $diffStatusSymbol, $debt);
-        return $stylish;
-}
-
-function getStylishForRemoved($diff, $debt) {
-        $diffStatusSymbol  = '- ';
-        $stylish  = getStylishFromFirstValueOfDiff($diff, $diffStatusSymbol, $debt);
-        return $stylish;
-}
-
-
-function getStylishForUpdated($diff, $debt) {
-        $diffStatusSymbolFirst  = '- ';
-        $diffStatusSymbolSecond = '+ ';
-        $stylish  = getStylishFromFirstValueOfDiff($diff, $diffStatusSymbolFirst, $debt);
-        $stylish  = $stylish . getStylishFromSecondValueOfDiff($diff, $diffStatusSymbolSecond, $debt);
-        return $stylish;  
-}
-
-
-function getStylishForIdentity($diff, $debt) {
-        $diffStatusSymbol  = '  ';
-        $stylish  = getStylishFromFirstValueOfDiff($diff, $diffStatusSymbol, $debt);
-        return $stylish; 
-}
-
-function getStylishFromDiffWithChild($diff, $debt) {
-        $diffStatusSymbol  = '  ';
-        $margin = getMarginLeft($debt, 4, 2);
-        $childDiffNode = \Gendiff\Diff\getChild($diff);
-        $key = \Gendiff\Diff\getKey($diff);
-        $stylish = $margin . $diffStatusSymbol . $key . ": " . getStylishFromDiffCol($childDiffNode, ($debt + 1));
-        return $stylish; 
-
-}
-
-
-function getStylishFromComplexValue($complexValue, $debt) {
-
-        $braceMargin = getMarginLeft(($debt - 1),  4, 0);
-
-        $keys = array_keys($complexValue);
-        $elements = array_reduce($keys, function($acc, $key) use ($complexValue, $debt) {
-               
- 
-                
-                $margin = getMarginLeft($debt, 4, 2);
-                $ValueIsArray = is_array($complexValue[$key]);
-                $value = $ValueIsArray ? getStylishFromComplexValue($complexValue[$key], ($debt+1)) : getStylishValueEncode($complexValue[$key]);
-                $spaceBeforeValue = mb_strlen($value) > 0 ? ' ' : '';
-                $symbolAfterValue = $ValueIsArray ? '' : "\n";
-
-                $acc  = $acc . $margin . '  ' . $key . ":" . $spaceBeforeValue . $value . $symbolAfterValue;
-               
-
-                return $acc;
-        },'');
-        $stylish =  "{\n" . $elements . $braceMargin  ."}\n";
-        return $stylish;
-}
-
-
-
-
-function getStylishFromDiffCol($diffCol, $debt) {
-
-        //var_dump($diffCol);
-
-        $braceMargin = getMarginLeft(($debt - 1),  4, 0);
-        $elements = array_reduce($diffCol, function($acc, $diff) use ($debt) {
-               
- 
-                
-                $margin = getMarginLeft($debt, 4, 2);
-
-                 
-                $diffStatus = \Gendiff\Diff\getPropertyDifference($diff);
-                $diffStatusSymbol = '';
-                $diffStatusSymbolFirst  = '';
-                $diffStatusSymbolSecond = '';
-                switch ($diffStatus) {
-                        case PropertyDifference:: none:
-                            $stylish = getStylishForIdentity($diff, $debt);
-                            break;
-                        case PropertyDifference::added:
-                            $stylish = getStylishForAdded($diff, $debt);
-                            break;
-                        case PropertyDifference::removed:
-                            $stylish = getStylishForRemoved($diff, $debt);
-                            break;
-                        case PropertyDifference::updated:
-                            $stylish = getStylishForUpdated($diff, $debt);
-                            break;
-                        case PropertyDifference::complexDifference:
-                            $stylish = getStylishFromDiffWithChild($diff, $debt);
-                            break;
-                        default:
-                            break;
-                    }
-
-                       $acc  = $acc . $stylish;
-                       return $acc;
-        },'');
-
-        $stylish =  "{\n" . $elements . $braceMargin  ."}\n";
-        return $stylish;
-}
-
-
-
-
-function getMarginLeft($debt, $spaceCountPerLevel, $offsetToLeft) {
-        $repeatCount = $debt * $spaceCountPerLevel - $offsetToLeft;
-        $repeatCount = $repeatCount < 0 ? 0 : $repeatCount;
-        return str_repeat(" ", $repeatCount);
-
-}
-
-function getStylishValueEncode($value) {
-        $type = gettype($value);
-        switch ($type) {
-                case "boolean":
-                    return $value ? "true" : "false";
-                    break;
-                case "NULL":
-                    return "null";
-                    break;
-                default:
-                    return  $value;
-                    break;
-            }
-   
-
-}
-
-
-///////////////////////////////////PLAIN
-
-
-
+/////////functions for plain formatting
 
 function getPlainFromDiffCol($diffCol, $name) {
         $plain = array_reduce($diffCol, function($acc, $diff) use ($name) {
@@ -221,13 +52,11 @@ function getPlainFromDiffCol($diffCol, $name) {
                        $acc  = $acc . $plain;
                        return $acc;
         },'');
-
         return $plain;
 }
 
 
 function getPlainForAdded($diff, $propertyName) {
-
         $value  = \Gendiff\Diff\getSecondValue($diff);
         $value = getPlainValueEncode($value);
         return "Property '{$propertyName}' was added with value: {$value}\n";
@@ -268,14 +97,194 @@ function getPlainValueEncode($value) {
                     return  $value;
                     break;
             }
-   
-
 }
+
+
+
+
+
+/////////functions for nested formatting (stylish, json)
+function getNestedFormatFromDiffCol($diffCol, $formatName, $debt) {
+    $braceMargin = getMarginLeft(($debt - 1),  4, 0);
+    $elements = array_reduce($diffCol, function($acc, $diff) use ($formatName, $debt) {
+        $margin = getMarginLeft($debt, 4, 2); 
+        $diffStatus = \Gendiff\Diff\getPropertyDifference($diff);
+        switch ($diffStatus) {
+            case PropertyDifference:: none:
+                $output = getNestedFormatForIdentity($diff, $debt, $formatName);
+                break;
+            case PropertyDifference::added:
+                $output = getNestedFormatForAdded($diff, $debt, $formatName);
+                break;
+            case PropertyDifference::removed:
+                $output = getNestedFormatForRemoved($diff, $debt, $formatName);
+                break;
+            case PropertyDifference::updated:
+                $output = getNestedFormatForUpdated($diff, $debt, $formatName);
+                break;
+            case PropertyDifference::complexDifference:
+                $output = getNestedFormatFromDiffWithChild($diff, $debt, $formatName);
+                break;
+            default:
+                break;
+        }
+
+                $acc  = $acc . $output;
+                return $acc;
+        },'');
+        $output =  "{\n" . $elements . $braceMargin  ."}\n";
+        return $output;
+}
+
+function getNestedFormatFromDiffWithChild($diff, $debt, $formatName)
+{
+    $diffStatusSymbol  = '  ';
+    $margin = getMarginLeft($debt, 4, 2);
+    $childDiffNode = \Gendiff\Diff\getChild($diff);
+    $key = getFormattedKey($diff, $formatName);
+    $output = $margin . $diffStatusSymbol . $key . ": " . getNestedFormatFromDiffCol($childDiffNode, $formatName, ($debt + 1));
+    return $output;
+}
+
+function getNestedFormatForAdded($diff, $debt, $formatName) {
+    $diffStatusSymbol = '+ ';
+    $output = getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbol, DiffValues::second); 
+    return $output;
+}
+ 
+function getNestedFormatForRemoved($diff, $debt, $formatName) {
+        $diffStatusSymbol  = '- ';
+        $output = getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbol, DiffValues::first);
+        return $output;
+}
+ 
+ 
+function getNestedFormatForUpdated($diff, $debt, $formatName) {
+        $diffStatusSymbolFirst  = '- ';
+        $diffStatusSymbolSecond = '+ ';
+        $output = getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbolFirst, DiffValues::first);
+        $output = $output . getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbolSecond, DiffValues::second);
+        return $output;  
+}
+ 
+ 
+function getNestedFormatForIdentity($diff, $debt, $formatName) {
+        $diffStatusSymbol  = '  ';
+        $output = getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbol, DiffValues::first);
+        return $output; 
+}
+ 
+
+enum DiffValues
+{
+    case first;
+    case second;
+}
+
+function getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbol, DiffValues $whichValue)
+{
+    $key = getFormattedKey($diff, $formatName);
+    $margin = getMarginLeft($debt, 4, 2);
+    switch ($whichValue) {
+        case DiffValues::first:
+            $value  = \Gendiff\Diff\getFirstValue($diff);
+            $isComplex = \Gendiff\Diff\isFirstValueComplex($diff);
+            break;
+        case DiffValues::second:
+            $value  = \Gendiff\Diff\getSecondValue($diff);
+            $isComplex = \Gendiff\Diff\isSecondValueComplex($diff);
+            break;
+        default:
+            break;
+        }
+    $value = formatValue($value, $isComplex, ($debt + 1), $formatName);
+    $spaceBeforeValue = $value === '' ? '' : ' ';
+    $symbolAfterValue = $isComplex ? '' : "\n";
+    $output  = $margin . $diffStatusSymbol . $key  . ":" . $spaceBeforeValue . $value  . $symbolAfterValue;
+    return $output;
+}
+
+function formatValue($value, $isComplexValue, $debt, $formatName)
+{      
+    switch ($formatName) {
+        case 'stylish':
+            $value = $isComplexValue ? getNestedFormatFromComplexValue($value, ($debt), $formatName) : getStylishValueEncode($value);    
+            break;
+        case 'json':
+            $value = $isComplexValue ? getNestedFormatFromComplexValue($value, ($debt), $formatName) : json_encode($value);
+            break;
+        default:
+            throw new Exception('Unsupported format');
+        }
+    return $value;
+}
+
+function getStylishValueEncode($value) {
+    $type = gettype($value);
+    switch ($type) {
+        case "boolean":
+            return $value ? "true" : "false";
+        case "NULL":
+            return "null";
+        default:
+            return  $value;
+    }
+}
+
+
+function getNestedFormatFromComplexValue($complexValue, $debt, $formatName)
+{
+        $braceMargin = getMarginLeft(($debt - 1),  4, 0);
+        $keys = array_keys($complexValue);
+        $elements = array_reduce($keys, function($acc, $key) use ($complexValue, $debt, $formatName) {
+                $margin = getMarginLeft($debt, 4, 2);
+                $ValueIsArray = is_array($complexValue[$key]);
+                $value = formatValue($complexValue[$key], $ValueIsArray, ($debt + 1), $formatName);
+                $spaceBeforeValue = mb_strlen($value) > 0 ? ' ' : '';
+                $symbolAfterValue = $ValueIsArray ? '' : "\n";
+                $key = formatKey($key, $formatName);
+                $acc  = $acc . $margin . '  ' . $key . ":" . $spaceBeforeValue . $value . $symbolAfterValue;
+                return $acc;
+        },'');
+        $output =  "{\n" . $elements . $braceMargin  ."}\n";
+        return $output;
+}
+
+function formatKey($key, $formatName)
+{
+    switch ($formatName) {
+        case 'stylish':
+            break;
+        case 'json':
+            $key = "\"{$key}\"";
+            break;
+        default:
+            throw new Exception('Unsupported format');
+        }
+    return $key;
+}
+
+function getFormattedKey($diff, $formatName)
+{
+        $key = \Gendiff\Diff\getKey($diff);
+        return formatKey($key, $formatName);
+}
+
+
+
+function getMarginLeft($debt, $spaceCountPerLevel, $offsetToLeft) {
+        $repeatCount = $debt * $spaceCountPerLevel - $offsetToLeft;
+        $repeatCount = $repeatCount < 0 ? 0 : $repeatCount;
+        return str_repeat(" ", $repeatCount);
+}
+
+
 
 
  
 
-function getJsonFromDiffCol($diffCol, $debt) 
-{
-        return null;
-}
+
+////////////////////
+
+
+
