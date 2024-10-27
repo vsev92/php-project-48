@@ -23,7 +23,7 @@ class FormattersTest extends TestCase
 
         
 
-        $stylish = \Gendiff\Formatters\getFormattedDifference($diffCol, 'stylish');
+        $stylish = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'stylish');
 
         $this->assertEquals($expected, $stylish);
 
@@ -43,7 +43,7 @@ class FormattersTest extends TestCase
 
         
 
-        $stylish = \Gendiff\Formatters\getFormattedDifference($diffCol, 'stylish');
+        $stylish = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'stylish');
 
         $this->assertEquals($expected, $stylish);
 
@@ -63,8 +63,8 @@ class FormattersTest extends TestCase
 
         
 
-        $stylish = \Gendiff\Formatters\getFormattedDifference($diffCol, 'plain');
-
+        $stylish = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'plain');
+  
         $this->assertEquals($expected, $stylish);
 
     
@@ -72,10 +72,10 @@ class FormattersTest extends TestCase
 
     public function testJsonFormatter(): void
     {
-  /*
-        $expected = file_get_contents(__DIR__ . '/fixtures/TestPlainFormatter/expected');
-        $path1 = (__DIR__ . '/fixtures/TestPlainFormatter/file1.json');
-        $path2 = (__DIR__ . '/fixtures/TestPlainFormatter/file2.json');
+  
+        $expected = file_get_contents(__DIR__ . '/fixtures/TestJsonFormatter/expected');
+        $path1 = (__DIR__ . '/fixtures/TestJsonFormatter/file1.json');
+        $path2 = (__DIR__ . '/fixtures/TestJsonFormatter/file2.json');
 
         $col1 = \Gendiff\Parser\parseFromFile($path1, \Gendiff\Parser\SourceType::json);
         $col2 = \Gendiff\Parser\parseFromFile($path2, \Gendiff\Parser\SourceType::json);
@@ -84,11 +84,11 @@ class FormattersTest extends TestCase
 
         
 
-        $stylish = \Gendiff\Formatters\getFormattedDifference($diffCol, 'json');
+        $stylish = \Gendiff\Formatters\jsonDumpDiffCol($diffCol);
 
         $this->assertEquals($expected, $stylish);
 
-    */
+    
     }
  
 }
