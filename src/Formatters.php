@@ -6,168 +6,73 @@ use Gendiff\Diff;
 use Gendiff\Diff\DiffStatus;
 use Exception;
 
-function getFormattedDiffCol($diffCol, $formatName, $debt = 1, $name = '') {
-        $formatted = array_reduce($diffCol, function($acc, $diff) use ($name, $formatName, $debt) {
-                $key = \Gendiff\Diff\getKey($diff);
-                $name = $name === '' ? $key : $name . "." . $key;
-                $margin = getMarginLeft($debt, 4, 2); 
-                $diffStatus = \Gendiff\Diff\getDiffStatus($diff);
-                $formattedDiff = processDiff($diff, $formatName, $debt, $name);
-                $acc  = $acc . $formattedDiff;
-                return $acc;
-        },'');
-  //   if ($formatName === 'stylish' || $formatName === 'json') {
-    if ($formatName === 'stylish') {
-        $braceMargin = getMarginLeft(($debt - 1),  4, 0);
-        $formatted =  "{\n" . $formatted . $braceMargin  ."}\n";
-     }
-
- return $formatted;
-
-}
-
-function processDiff($diff, $formatName, $debt, $name)
+function getFormattedDiffCol($diffCol, $formatName) 
 {
-        
-        $diffStatus = \Gendiff\Diff\getDiffStatus($diff);
-        switch ($diffStatus) {
-                case DiffStatus::noDifference:
-                        $output = getFormattedForNoDifference($diff, $formatName, $debt, $name);
-                    break;
-                case DiffStatus::added:
-                        $output = getFormattedForAdded($diff, $formatName, $debt, $name);
-                    break;
-                case DiffStatus::removed:
-                        $output = getFormattedForRemoved($diff, $formatName, $debt, $name);
-                    break;
-                case DiffStatus::updated:
-                        $output = getFormattedForUpdated($diff, $formatName, $debt, $name);
-                    break;
-                case DiffStatus::parentDiffNode:
-                        $output = getFormattedForParentDiffNode($diff, $formatName, $debt, $name); 
-                    break;
-                default:
-                    break;
+
+    switch ($formatName) {
+        case 'plain':
+                $output = plainDumpDiffCol($diffCol);
+                break;
+        case 'stylish':
+                $output = stylishDumpDiffCol($diffCol);
+                break;
+        case 'json':
+                $output = jsonDumpDumpDiffCol($diffCol);
+            break;
+        default:
+            throw new Exception('Unsupported format');
         }
-        return $output;
-
-
+    return $output;
 }
 
-function getFormattedForAdded($diff, $formatName, $debt, $name)
-{
-        switch ($formatName) {
-                case 'plain':
-                        $output = getPlainForAdded($diff, $name);
-                        break;
-                case 'stylish':
-                        $output = getNestedFormatForAdded($diff, $debt, $formatName);
-                        break;
-                case 'json':
-                        $output = jsonDumpProperties($diff, $debt); 
-                    break;
-                default:
-                    throw new Exception('Unsupported format');
-                }
-            return $output;
-}
-
-function getFormattedForRemoved($diff, $formatName, $debt, $name)
-{
-        switch ($formatName) {
-                case 'plain':
-                        $output = getPlainForRemoved($name);
-                        break;
-                case 'stylish':
-                        $output = getNestedFormatForRemoved($diff, $debt, $formatName);
-                        break;
-                case 'json':
-                        $output = jsonDumpProperties($diff, $debt);
-                    break;
-                default:
-                    throw new Exception('Unsupported format');
-                }
-            return $output;
-}
-
-function getFormattedForUpdated($diff, $formatName, $debt, $name)
-{
-        switch ($formatName) {
-                case 'plain':
-                        $output = getPlainForUpdated($diff, $name);
-                        break;
-                case 'stylish':
-                        $output = getNestedFormatForUpdated($diff, $debt, $formatName);
-                        break;
-                case 'json':
-                        $output = jsonDumpProperties($diff, $debt);
-                    break;
-                default:
-                    throw new Exception('Unsupported format');
-                }
-            return $output;
-}
-
-function getFormattedForNoDifference($diff, $formatName, $debt, $name)
-{
-        switch ($formatName) {
-                case 'plain':
-                        $output = '';
-                        break;
-                case 'stylish':
-                        $output = getNestedFormatForIdentity($diff, $debt, $formatName);
-                        break;
-                case 'json':
-                        $output = jsonDumpProperties($diff, $debt);
-                    break;
-                default:
-                    throw new Exception('Unsupported format');
-                }
-            return $output;
-}
-
-function getFormattedForParentDiffNode($diff, $formatName, $debt, $name)
-{
-        switch ($formatName) {
-                case 'plain':
-                        $child = \Gendiff\Diff\getChild($diff);
-                        $output = getFormattedDiffCol($child , 'plain', 1, $name);
-                        break;
-                case 'stylish':
-                        $output = getNestedFormatFromDiffWithChild($diff, $debt, $formatName);
-                        break;
-                case 'json':
-                        $output = jsonDumpProperties($diff, $debt);
-                    break;
-                default:
-                    throw new Exception('Unsupported format');
-                }
-            return $output;
-}
 
 
 /////////functions for plain formatting
 
-function getPlainForAdded($diff, $propertyName) {
-        $value  = \Gendiff\Diff\getNewValue($diff);
-        $value = getPlainValueEncode($value);
-        return "Property '{$propertyName}' was added with value: {$value}\n";
+function plainDumpDiffCol($diffCol, $name = '') {
+    $formatted = array_reduce($diffCol, function($acc, $diff) use ($name) {
+            $key = \Gendiff\Diff\getKey($diff);
+            $name = $name === '' ? $key : $name . "." . $key;
+            $formattedDiff = plainDumpDiff($diff, $name);
+            $acc  = $acc . $formattedDiff;
+            return $acc;
+    },'');
+return $formatted;
+
 }
 
+function plainDumpDiff($diff, $propertyName)
+{
+    $diffStatus = \Gendiff\Diff\getDiffStatus($diff);
+    switch ($diffStatus) {
+            case DiffStatus::noDifference:
+                    $output = '';
+                break;
+            case DiffStatus::added:
+                    $newValue = \Gendiff\Diff\getNewValue($diff);
+                    $newValue = getPlainValueEncode($newValue);
+                    $output = "Property '{$propertyName}' was added with value: {$newValue}\n";
+                break;
+            case DiffStatus::removed:
+                    $output = "Property '{$propertyName}' was removed\n";
+                break;
+            case DiffStatus::updated:
+                    $value  = \Gendiff\Diff\getValue($diff);
+                    $value  = getPlainValueEncode($value);
+                    $newValue = \Gendiff\Diff\getNewValue($diff);
+                    $newValue = getPlainValueEncode($newValue);
+                    $output = "Property '{$propertyName}' was updated. From {$value} to {$newValue}\n";
+                break;
+            case DiffStatus::parentDiffNode:
+                    $child = \Gendiff\Diff\getChild($diff);
+                    $output = plainDumpDiffCol($child, $propertyName);
+                break;
+            default:
+                break;
+    }
+    return $output;
 
-function getPlainForRemoved($propertyName) {
 
-        return "Property '{$propertyName}' was removed\n";
-}
-
-
-
-function getPlainForUpdated($diff, $propertyName) {
-        $value  = \Gendiff\Diff\getValue($diff);
-        $value  = getPlainValueEncode($value);
-        $newValue = \Gendiff\Diff\getNewValue($diff);
-        $newValue = getPlainValueEncode($newValue);
-        return "Property '{$propertyName}' was updated. From {$value} to {$newValue}\n";
 }
 
 function getPlainValueEncode($value) {
@@ -193,91 +98,96 @@ function getPlainValueEncode($value) {
 }
 
 
-/////////functions for nested formatting (stylish, json)
+/////////functions for stylish
 
-function getNestedFormatFromDiffWithChild($diff, $debt, $formatName)
+function stylishDumpDiffCol($diffCol, $debt = 1) {
+    $formatted = array_reduce($diffCol, function($acc, $diff) use ($debt) {
+            $key = \Gendiff\Diff\getKey($diff);
+            $margin = getMarginLeft($debt, 4, 2); 
+            $formattedDiff = stylishDumpDiff($diff, $debt);
+            $acc  = $acc . $formattedDiff;
+            return $acc;
+    },'');
+
+    $braceMargin = getMarginLeft(($debt - 1),  4, 0);
+    $formatted =  "{\n" . $formatted . $braceMargin  ."}\n";
+return $formatted;
+}
+
+
+const STYLISH_SYMBOL_ADDDED = '+ ';
+const STYLISH_SYMBOL_REMOVED = '- ';
+const STYLISH_SYMBOL_NO_DIFFERENCE = '  ';
+
+
+function stylishDumpDiff($diff, $debt)
 {
-    $diffStatusSymbol  = '  ';
+    $value = null;
+    $newValue = null;
+    if (\Gendiff\Diff\isKeyExistsInFirst($diff)) {
+        $isValueComplex = \Gendiff\Diff\isFirstValueComplex($diff);
+        $value = \Gendiff\Diff\getValue($diff);
+        $value = formatValueToStylish($value, $isValueComplex, $debt);
+        $spaceBeforeValue = $value === '' ? '' : ' ';
+        $symbolAfterValue = $isValueComplex ? '' : "\n";
+    }
+
+    if (\Gendiff\Diff\isKeyExistsInSecond($diff)) {
+        $isNewValueComplex = \Gendiff\Diff\isSecondValueComplex($diff);
+        $newValue = \Gendiff\Diff\getnewValue($diff);
+        $newValue = formatValueToStylish($newValue, $isNewValueComplex, $debt);
+        $spaceBeforeNewValue = $newValue === '' ? '' : ' ';
+        $symbolAfterNewValue = $isNewValueComplex ? '' : "\n";
+    }
+    $key = \Gendiff\Diff\getKey($diff);
     $margin = getMarginLeft($debt, 4, 2);
-    $childDiffNode = \Gendiff\Diff\getChild($diff);
-    $key = getFormattedKey($diff, $formatName);
-    $output = $margin . $diffStatusSymbol . $key . ": " . getFormattedDiffCol($childDiffNode, $formatName, ($debt + 1));
+
+    $diffStatus = \Gendiff\Diff\getDiffStatus($diff);
+    switch ($diffStatus) {
+            case DiffStatus::noDifference:
+                $output  = $margin . STYLISH_SYMBOL_NO_DIFFERENCE . $key  . ":" . $spaceBeforeValue . $value  . $symbolAfterValue;
+                break;
+            case DiffStatus::added:
+                $output  = $margin . STYLISH_SYMBOL_ADDDED  . $key  . ":" . $spaceBeforeNewValue . $newValue  . $symbolAfterNewValue;
+                break;
+            case DiffStatus::removed:
+                $output  = $margin . STYLISH_SYMBOL_REMOVED  . $key  . ":" . $spaceBeforeValue . $value  . $symbolAfterValue;
+                break;
+            case DiffStatus::updated:
+                $output  = $margin . STYLISH_SYMBOL_REMOVED  . $key  . ":" . $spaceBeforeValue . $value  . $symbolAfterValue;
+                $output = $output . $margin . STYLISH_SYMBOL_ADDDED  . $key  . ":" . $spaceBeforeNewValue . $newValue  . $symbolAfterNewValue;
+                break;
+            case DiffStatus::parentDiffNode:
+                $child = \Gendiff\Diff\getChild($diff);
+                $output = $margin . STYLISH_SYMBOL_NO_DIFFERENCE . $key . ": " . stylishDumpDiffCol($child, ($debt + 1));
+                break;
+            default:
+                break;
+    }
     return $output;
 }
 
-function getNestedFormatForAdded($diff, $debt, $formatName) {
-    $diffStatusSymbol = '+ ';
-    $output = getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbol, DiffValues::newValue); 
-    return $output;
-}
- 
-function getNestedFormatForRemoved($diff, $debt, $formatName) {
-        $diffStatusSymbol  = '- ';
-        $output = getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbol, DiffValues::value);
-        return $output;
-}
- 
- 
-function getNestedFormatForUpdated($diff, $debt, $formatName) {
-        $diffStatusSymbolFirst  = '- ';
-        $diffStatusSymbolSecond = '+ ';
-        $output = getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbolFirst, DiffValues::value);
-        $output = $output . getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbolSecond, DiffValues::newValue);
-        return $output;  
-}
- 
- 
-function getNestedFormatForIdentity($diff, $debt, $formatName) {
-        $diffStatusSymbol  = '  ';
-        $output = getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbol, DiffValues::value);
-        return $output; 
-}
- 
-
-
-
-enum DiffValues
-{
-    case value;
-    case newValue;
-}
-
-function getNestedFormatString($diff, $debt, $formatName, $diffStatusSymbol, DiffValues $whichValue)
-{
-    $key = getFormattedKey($diff, $formatName);
-    $margin = getMarginLeft($debt, 4, 2);
-    switch ($whichValue) {
-        case DiffValues::value:
-            $value  = \Gendiff\Diff\getValue($diff);
-            $isComplex = \Gendiff\Diff\isFirstValueComplex($diff);
-            break;
-        case DiffValues::newValue:
-            $value  = \Gendiff\Diff\getNewValue($diff);
-            $isComplex = \Gendiff\Diff\isSecondValueComplex($diff);
-            break;
-        default:
-            break;
-        }
-    $value = formatValue($value, $isComplex, ($debt + 1), $formatName);
-    $spaceBeforeValue = $value === '' ? '' : ' ';
-    $symbolAfterValue = $isComplex ? '' : "\n";
-    $output  = $margin . $diffStatusSymbol . $key  . ":" . $spaceBeforeValue . $value  . $symbolAfterValue;
-    return $output;
-}
-
-function formatValue($value, $isComplexValue, $debt, $formatName, $comma = '')
+function formatValueToStylish($value, $isComplexValue, $debt)
 {      
-    switch ($formatName) {
-        case 'stylish':
-            $value = $isComplexValue ? getNestedFormatFromComplexValue($value, ($debt), $formatName) : getStylishValueEncode($value);    
-            break;
-        case 'json':
-            $value = $isComplexValue ? getNestedFormatFromComplexValue($value, ($debt), $formatName) : json_encode($value);
-            break;
-        default:
-            throw new Exception('Unsupported format');
-        }
+    $value = $isComplexValue ? getStylishFromComplexValue($value, ($debt + 1), $formatName) : getStylishValueEncode($value);    
     return $value;
+}
+
+function getStylishFromComplexValue($complexValue, $debt)
+{
+        $keys = array_keys($complexValue);
+        $braceMargin = getMarginLeft(($debt - 1),  4, 0);
+        $elements = array_reduce($keys, function($acc, $key) use ($complexValue, $debt, $formatName) {
+                $margin = getMarginLeft($debt, 4, 2);
+                $ValueIsArray = is_array($complexValue[$key]);
+                $value = formatValueToStylish($complexValue[$key], $ValueIsArray, ($debt));
+                $spaceBeforeValue = mb_strlen($value) > 0 ? ' ' : '';
+                $symbolAfterValue = $ValueIsArray ? '' : "\n";
+                $acc  = $acc . $margin . '  ' . $key . ":" . $spaceBeforeValue . $value . $symbolAfterValue;
+                return $acc;
+        },'');
+        $output =  "{\n" . $elements . $braceMargin  ."}\n";
+        return $output;
 }
 
 function getStylishValueEncode($value) {
@@ -291,49 +201,6 @@ function getStylishValueEncode($value) {
             return  $value;
     }
 }
-
-
-function getNestedFormatFromComplexValue($complexValue, $debt, $formatName, $comma = '')
-{
-        
-        $braceMargin = getMarginLeft(($debt - 1),  4, 0);
-        $keys = array_keys($complexValue);
-        $lastKey = $keys[count($keys) - 1];
-        $elements = array_reduce($keys, function($acc, $key) use ($complexValue, $debt, $formatName, $lastKey) {
-                $margin = getMarginLeft($debt, 4, 2);
-                $ValueIsArray = is_array($complexValue[$key]);
-                $comma = $formatName === 'json' && $key !== $lastKey  ? "," : "";
-                $value = formatValue($complexValue[$key], $ValueIsArray, ($debt + 1), $formatName);
-                $spaceBeforeValue = mb_strlen($value) > 0 ? ' ' : '';
-                $symbolAfterValue = $ValueIsArray ? '' : "\n";
-                $key = formatKey($key, $formatName);
-                $acc  = $acc . $margin . '  ' . $key . ":" . $spaceBeforeValue . $value . $comma . $symbolAfterValue;
-                return $acc;
-        },'');
-        $output =  "{\n" . $elements . $braceMargin  ."}\n";
-        return $output;
-}
-
-function formatKey($key, $formatName)
-{
-    switch ($formatName) {
-        case 'stylish':
-            break;
-        case 'json':
-            $key = "\"{$key}\"";
-            break;
-        default:
-            throw new Exception('Unsupported format');
-        }
-    return $key;
-}
-
-function getFormattedKey($diff, $formatName)
-{
-        $key = \Gendiff\Diff\getKey($diff);
-        return formatKey($key, $formatName);
-}
-
 
 
 function getMarginLeft($debt, $spaceCountPerLevel, $offsetToLeft) {
@@ -363,7 +230,7 @@ function jsonDumpDiffCol($diffCol, $debt=1)
 function jsonDumpDiff($diff, $debt, $comma) 
 {
     $key = \Gendiff\Diff\getKey($diff);
-    $jsonKey = getFormattedKey($diff, 'json');
+    $jsonKey = getFormattedJsonKey($diff);
     $margin = getMarginLeft($debt, 4, 0);
     if (\Gendiff\Diff\getDiffStatus($diff) !== DiffStatus::parentDiffNode) {
         $formattedProperies = jsonDumpProperties($diff, ($debt + 1));
@@ -386,9 +253,7 @@ function jsonDumpProperties($diff, $debt)
     $output = array_reduce($keys, function($acc, $key) use ($properties, $debt, $lastKey) {
         $margin = getMarginLeft($debt, 4, 0);
         $comma = $key === $lastKey ? '' : ',';
-        $jsonKey = formatValue($key, false, $debt, 'json');
-        //$value = $properties[$key];
-        //$jsonValue = !is_array($value) ? json_encode($value) : getJsonFromComplexValue($complexValue, $debt, $comma = '');
+        $jsonKey = formatValueToJson($key, false, $debt);
         $jsonValue = json_encode($properties[$key]);
         $acc = $acc . $margin . $jsonKey . ": " . $jsonValue . $comma . "\n";
         return $acc;
@@ -401,19 +266,22 @@ function getDiffProperties($diff)
     return array_filter($diff, fn($key)=> $key!=='key',ARRAY_FILTER_USE_KEY);
 }
 
-/*
-function formatValue($value, $isComplexValue, $debt, $formatName, $comma = '')
+function formatJsonKey($key, $formatName)
+{
+    $key = "\"{$key}\"";
+    return $key;
+}
+
+function getFormattedJsonKey($diff)
+{
+        $key = \Gendiff\Diff\getKey($diff);
+        return formatJsonKey($key, $formatName);
+}
+
+
+function formatValueToJson($value, $isComplexValue, $debt, $comma = '')
 {      
-    switch ($formatName) {
-        case 'stylish':
-            $value = $isComplexValue ? getNestedFormatFromComplexValue($value, ($debt), $formatName) : getStylishValueEncode($value);    
-            break;
-        case 'json':
-            $value = $isComplexValue ? getNestedFormatFromComplexValue($value, ($debt), $formatName) : json_encode($value);
-            break;
-        default:
-            throw new Exception('Unsupported format');
-        }
+    $value = $isComplexValue ? getNestedFormatFromComplexValue($value, ($debt), $formatName) : json_encode($value);
     return $value;
 }
 
@@ -426,14 +294,14 @@ function getJsonFormatFromComplexValue($complexValue, $debt, $comma = '')
         $elements = array_reduce($keys, function($acc, $key) use ($complexValue, $debt, $formatName, $lastKey) {
                 $margin = getMarginLeft($debt, 4, 2);
                 $ValueIsArray = is_array($complexValue[$key]);
-                $comma = $formatName === 'json' && $key !== $lastKey  ? "," : "";
-                $value = formatValue($complexValue[$key], $ValueIsArray, ($debt + 1), $formatName);
+                $comma = $key !== $lastKey  ? "," : "";
+                $value = formatValueToJson($complexValue[$key], $ValueIsArray, ($debt + 1), $formatName);
                 $spaceBeforeValue = mb_strlen($value) > 0 ? ' ' : '';
                 $symbolAfterValue = $ValueIsArray ? '' : "\n";
-                $key = formatKey($key, $formatName);
+                $key = formatJsonKey($key, $formatName);
                 $acc  = $acc . $margin . '  ' . $key . ":" . $spaceBeforeValue . $value . $comma . $symbolAfterValue;
                 return $acc;
         },'');
         $output =  "{\n" . $elements . $braceMargin  ."}\n";
         return $output;
-}*/
+}
