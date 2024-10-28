@@ -1,70 +1,98 @@
 {
     "common": {
-        "follow": {
-            "diffStatus": "added",
-            "newValue": false
-        },
-        "setting1": {
-            "diffStatus": "noDifference",
-            "value": "Value 1"
-        },
-        "setting2": {
-            "diffStatus": "removed",
-            "value": 200
-        },
-        "setting3": {
-            "diffStatus": "updated",
-            "value": true,
-            "newValue": null
-        },
-        "setting4": {
-            "diffStatus": "added",
-            "newValue": "blah blah"
-        },
-        "setting5": {
-            "diffStatus": "added",
-            "newValue": {"key5":"value5"}
-        },
-        "setting6": {
-            "doge": {
-                "wow": {
-                    "diffStatus": "updated",
-                    "value": "",
-                    "newValue": "so much"
+        "diffStatus": "parentDiffNode",
+        "Child": {
+            "follow": {
+                "diffStatus": "added",
+                "newValue": false
+            },
+            "setting1": {
+                "diffStatus": "noDifference",
+                "value": "Value 1"
+            },
+            "setting2": {
+                "diffStatus": "removed",
+                "value": 200
+            },
+            "setting3": {
+                "diffStatus": "updated",
+                "value": true,
+                "newValue": null
+            },
+            "setting4": {
+                "diffStatus": "added",
+                "newValue": "blah blah"
+            },
+            "setting5": {
+                "diffStatus": "added",
+                "newValue": {
+                    "key5": "value5"
                 }
             },
-            "key": {
-                "diffStatus": "noDifference",
-                "value": "value"
-            },
-            "ops": {
-                "diffStatus": "added",
-                "newValue": "vops"
+            "setting6": {
+                "diffStatus": "parentDiffNode",
+                "Child": {
+                    "doge": {
+                        "diffStatus": "parentDiffNode",
+                        "Child": {
+                            "wow": {
+                                "diffStatus": "updated",
+                                "value": "",
+                                "newValue": "so much"
+                            }
+                        }
+                    },
+                    "key": {
+                        "diffStatus": "noDifference",
+                        "value": "value"
+                    },
+                    "ops": {
+                        "diffStatus": "added",
+                        "newValue": "vops"
+                    }
+                }
             }
         }
     },
     "group1": {
-        "baz": {
-            "diffStatus": "updated",
-            "value": "bas",
-            "newValue": "bars"
-        },
-        "foo": {
-            "diffStatus": "noDifference",
-            "value": "bar"
-        },
-        "nest": {
-            "diffStatus": "updated",
-            "value": {"key":"value"},
-            "newValue": "str"
+        "diffStatus": "parentDiffNode",
+        "Child": {
+            "baz": {
+                "diffStatus": "updated",
+                "value": "bas",
+                "newValue": "bars"
+            },
+            "foo": {
+                "diffStatus": "noDifference",
+                "value": "bar"
+            },
+            "nest": {
+                "diffStatus": "updated",
+                "value": {
+                    "key": "value"
+                },
+                "newValue": "str"
+            }
         }
     },
     "group2": {
         "diffStatus": "removed",
-        "value": {"abc":12345,"deep":{"id":45}}
+        "value": {
+            "abc": 12345,
+            "deep": {
+                "id": 45
+            }
+        }
     },
     "group3": {
         "diffStatus": "added",
-        "newValue": {"deep":{"id":{"number":45}},"fee":100500}
+        "newValue": {
+            "deep": {
+                "id": {
+                    "number": 45
+                }
+            },
+            "fee": 100500
+        }
     }
 }

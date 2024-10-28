@@ -9,87 +9,56 @@ class FormattersTest extends TestCase
 {
 
 
-    public function testGetStylishFromColJson(): void
+    public function testStylishFormatter(): void
     {
-  
-        $expected = file_get_contents(__DIR__ . '/fixtures/TestCompareNestedJson/expected');
-        $path1 = (__DIR__ . '/fixtures/TestCompareNestedJson/file1.json');
-        $path2 = (__DIR__ . '/fixtures/TestCompareNestedJson/file2.json');
+        $expected = file_get_contents(__DIR__ . '/fixtures/TestStylishFormatter/expected');
 
-        $col1 = \Gendiff\Parser\parseFromFile($path1, \Gendiff\Parser\SourceType::json);
-        $col2 = \Gendiff\Parser\parseFromFile($path2, \Gendiff\Parser\SourceType::json);
 
-        $diffCol = \Gendiff\Diff\makeDiffCollection($col1, $col2);
+        $pathToDiffCol =  __DIR__ . '/fixtures/DiffCol';
+        $diffCol = file_get_contents($pathToDiffCol);
+        $diffCol = unserialize($diffCol);
 
-        
 
-        $stylish = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'stylish');
-
-        $this->assertEquals($expected, $stylish);
-
+        $formatted = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'stylish');
+        $this->assertEquals($expected, $formatted);
     }
 
-    public function testGetStylishFromColYaml(): void
-    {
-  
-        $expected = file_get_contents(__DIR__ . '/fixtures/TestCompareNestedYaml/expected');
-        $path1 = (__DIR__ . '/fixtures/TestCompareNestedYaml/file1.yml');
-        $path2 = (__DIR__ . '/fixtures/TestCompareNestedYaml/file2.yml');
-
-        $col1 = \Gendiff\Parser\parseFromFile($path1, \Gendiff\Parser\SourceType::yaml);
-        $col2 = \Gendiff\Parser\parseFromFile($path2, \Gendiff\Parser\SourceType::yaml);
-
-        $diffCol = \Gendiff\Diff\makeDiffCollection($col1, $col2);
-
-        
-
-        $stylish = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'stylish');
-
-        $this->assertEquals($expected, $stylish);
-
-    }
 
     public function testPlainFormatter(): void
     {
-  
         $expected = file_get_contents(__DIR__ . '/fixtures/TestPlainFormatter/expected');
-        $path1 = (__DIR__ . '/fixtures/TestPlainFormatter/file1.json');
-        $path2 = (__DIR__ . '/fixtures/TestPlainFormatter/file2.json');
 
-        $col1 = \Gendiff\Parser\parseFromFile($path1, \Gendiff\Parser\SourceType::json);
-        $col2 = \Gendiff\Parser\parseFromFile($path2, \Gendiff\Parser\SourceType::json);
+        $pathToDiffCol =  __DIR__ . '/fixtures/DiffCol';
+        $diffCol = file_get_contents($pathToDiffCol);
+        $diffCol = unserialize($diffCol);
 
-        $diffCol = \Gendiff\Diff\makeDiffCollection($col1, $col2);
-
-        
-
-        $stylish = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'plain');
-  
-        $this->assertEquals($expected, $stylish);
-
-    
+        $formatted = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'plain');
+        $this->assertEquals($expected, $formatted);
     }
 
     public function testJsonFormatter(): void
     {
-  
         $expected = file_get_contents(__DIR__ . '/fixtures/TestJsonFormatter/expected');
-        $path1 = (__DIR__ . '/fixtures/TestJsonFormatter/file1.json');
-        $path2 = (__DIR__ . '/fixtures/TestJsonFormatter/file2.json');
 
-        $col1 = \Gendiff\Parser\parseFromFile($path1, \Gendiff\Parser\SourceType::json);
-        $col2 = \Gendiff\Parser\parseFromFile($path2, \Gendiff\Parser\SourceType::json);
+        $pathToDiffCol =  __DIR__ . '/fixtures/DiffCol';
+        $diffCol = file_get_contents($pathToDiffCol);
+        $diffCol = unserialize($diffCol);
 
-        $diffCol = \Gendiff\Diff\makeDiffCollection($col1, $col2);
-
-        
-
-        $stylish = \Gendiff\Formatters\jsonDumpDiffCol($diffCol);
-
-        $this->assertEquals($expected, $stylish);
-
-    
+        $formatted = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'json');
+        $this->assertEquals($expected, $formatted);
     }
- 
-}
 
+    public function testGetFormattedDiffCol(): void
+    {
+        $pathToExpected =  __DIR__ . '/fixtures/ExpectedDiffCol';
+        $pathToCol1 =  __DIR__ . '/fixtures/ExpectedCol1';
+        $pathToCol2 =  __DIR__ . '/fixtures/ExpectedCol2';
+        
+        $expected = file_get_contents($pathToExpected);
+        $expected = unserialize($expected);
+
+        $this->expectException(Exception::class);
+        $formatted = \Gendiff\Formatters\getFormattedDiffCol($diffCol, '');
+      
+    }
+}

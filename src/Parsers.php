@@ -4,6 +4,7 @@ namespace Gendiff\Parser;
 
 use Symfony\Component\Yaml\Yaml;
 use InvalidArgumentException;
+use Exception;
 
 enum SourceType
 {
@@ -36,6 +37,6 @@ function getSourceType($filePath)
     } elseif (str_ends_with($filePath, '.yml') || str_ends_with($filePath, '.yaml')) {
         return SourceType::yaml;
     } else {
-        return SourceType::unsupported;
+        throw new Exception('Unsupported file type' . $filePath);
     }
 }
