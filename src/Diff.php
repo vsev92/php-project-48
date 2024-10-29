@@ -1,22 +1,22 @@
 <?php
 
-namespace Gendiff\Diff;
+namespace Differ\Differ;
 
-use  Gendiff\Formatters;
-use  Gendiff\Parser;
-use  Gendiff\Parser\SourceType;
+use  Differ\Formatters;
+use  Differ\Parser;
+use  Differ\Parser\SourceType;
 use  Symfony\Component\Yaml\Yaml;
 use  Exception;
 
 /////////// functions for make diff objects
 function genDiff($pathToFile1, $pathToFile2, $formatName)
 {
-        $sourceType1 = \Gendiff\Parser\getSourceType($pathToFile1);
-        $sourceType2 = \Gendiff\Parser\getSourceType($pathToFile2);
-        $collection1 = \Gendiff\Parser\parseFromFile($pathToFile1, $sourceType1);
-        $collection2  = \Gendiff\Parser\parseFromFile($pathToFile2, $sourceType2);
+        $sourceType1 = \Differ\Parser\getSourceType($pathToFile1);
+        $sourceType2 = \Differ\Parser\getSourceType($pathToFile2);
+        $collection1 = \Differ\Parser\parseFromFile($pathToFile1, $sourceType1);
+        $collection2  = \Differ\Parser\parseFromFile($pathToFile2, $sourceType2);
         $diffCol = makeDiffCollection($collection1, $collection2);
-        return \Gendiff\Formatters\getFormattedDiffCol($diffCol, $formatName);
+        return \Differ\Formatters\getFormattedDiffCol($diffCol, $formatName);
 }
 
 

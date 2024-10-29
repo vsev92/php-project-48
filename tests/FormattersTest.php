@@ -1,8 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Gendiff\Parser;
-use Gendiff\Formatters;
+use Differ\Parser;
+use Differ\Formatters;
 
 
 class FormattersTest extends TestCase
@@ -19,7 +19,7 @@ class FormattersTest extends TestCase
         $diffCol = unserialize($diffCol);
 
 
-        $formatted = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'stylish');
+        $formatted = \Differ\Formatters\getFormattedDiffCol($diffCol, 'stylish');
         $this->assertEquals($expected, $formatted);
     }
 
@@ -32,7 +32,7 @@ class FormattersTest extends TestCase
         $diffCol = file_get_contents($pathToDiffCol);
         $diffCol = unserialize($diffCol);
 
-        $formatted = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'plain');
+        $formatted = \Differ\Formatters\getFormattedDiffCol($diffCol, 'plain');
         $this->assertEquals($expected, $formatted);
     }
 
@@ -44,7 +44,7 @@ class FormattersTest extends TestCase
         $diffCol = file_get_contents($pathToDiffCol);
         $diffCol = unserialize($diffCol);
 
-        $formatted = \Gendiff\Formatters\getFormattedDiffCol($diffCol, 'json');
+        $formatted = \Differ\Formatters\getFormattedDiffCol($diffCol, 'json');
         $this->assertEquals($expected, $formatted);
     }
 
@@ -58,7 +58,7 @@ class FormattersTest extends TestCase
         $expected = unserialize($expected);
 
         $this->expectException(Exception::class);
-        $formatted = \Gendiff\Formatters\getFormattedDiffCol($diffCol, '');
+        $formatted = \Differ\Formatters\getFormattedDiffCol($diffCol, '');
       
     }
 }

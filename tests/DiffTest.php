@@ -1,16 +1,16 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Gendiff\Diff;
-use Gendiff\Formatters;
-use Gendiff\Parser\SourceType;
+use Differ\Differ;
+use Differ\Formatters;
+use Differ\Parser\SourceType;
 
 class DiffTest extends TestCase
 {
 
- 
 
-      public function testGenDiffColl(): void
+
+      public function testDiffColl(): void
       {
       
           $pathToCol1 =  __DIR__ . '/fixtures/Col1';
@@ -26,7 +26,7 @@ class DiffTest extends TestCase
           $col2 = file_get_contents($pathToCol2);
           $col2 = unserialize($col2);
 
-          $diffCol = \Gendiff\Diff\makeDiffCollection($col1, $col2);
+          $diffCol = \Differ\Differ\makeDiffCollection($col1, $col2);
     
          
           $this->assertEquals($expected, $diffCol);

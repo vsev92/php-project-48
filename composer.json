@@ -1,7 +1,7 @@
 {
     "name": "hexlet/code",
     "bin": ["bin/gendiff"],
-    "description": "gendiff project",
+    "description": "Differ project",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -15,11 +15,7 @@
         "docopt/docopt": "1.0.*@dev",
         "symfony/yaml": "7@dev"
     },
-    "autoload-dev": {
-    "psr-4": {
-      "Gendiff\\": "tests/"
-    }
-  },
+
     "require-dev": {
         "squizlabs/php_codesniffer": "4.0.x-dev",
         "phpunit/phpunit": "^12.0@dev"
@@ -29,14 +25,7 @@
                     "src/Parsers.php",
                     "src/Diff.php",
                     "src/Formatters.php"
-
-
-       
-    
-
-
- 
-       ]    
+        ]    
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Gendiff\Parser;
+namespace Differ\Parser;
 
 use Symfony\Component\Yaml\Yaml;
 use InvalidArgumentException;

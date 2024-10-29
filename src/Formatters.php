@@ -1,9 +1,9 @@
 <?php
 
-namespace Gendiff\Formatters;
+namespace Differ\Formatters;
 
-use Gendiff\Diff;
-use Gendiff\Diff\DiffStatus;
+use Differ\Differ;
+use Differ\Differ\DiffStatus;
 use Exception;
 
 function getFormattedDiffCol($diffCol, $formatName)
@@ -42,13 +42,13 @@ function plainDumpDiffCol($diffCol, $name = '')
 
 function plainDumpDiff($diff, $propertyName)
 {
-    $diffStatus = \Gendiff\Diff\getDiffStatus($diff);
+    $diffStatus = \Differ\Differ\getDiffStatus($diff);
     switch ($diffStatus) {
         case DiffStatus::noDifference:
             $output = '';
             break;
         case DiffStatus::added:
-            $newValue = \Gendiff\Diff\getNewValue($diff);
+            $newValue = \Differ\Differ\getNewValue($diff);
             $newValue = getPlainValueEncode($newValue);
             $output = "Property '{$propertyName}' was added with value: {$newValue}\n";
             break;
@@ -56,14 +56,14 @@ function plainDumpDiff($diff, $propertyName)
             $output = "Property '{$propertyName}' was removed\n";
             break;
         case DiffStatus::updated:
-            $value  = \Gendiff\Diff\getValue($diff);
+            $value  = \Differ\Differ\getValue($diff);
             $value  = getPlainValueEncode($value);
-            $newValue = \Gendiff\Diff\getNewValue($diff);
+            $newValue = \Differ\Differ\getNewValue($diff);
             $newValue = getPlainValueEncode($newValue);
             $output = "Property '{$propertyName}' was updated. From {$value} to {$newValue}\n";
             break;
         case DiffStatus::parentDiffNode:
-            $child = \Gendiff\Diff\getChild($diff);
+            $child = \Differ\Differ\getChild($diff);
             $output = plainDumpDiffCol($child, $propertyName);
             break;
         default:
@@ -132,24 +132,24 @@ function stylishDumpDiff($key, $diff, $debt)
 {
     $value = null;
     $newValue = null;
-    if (\Gendiff\Diff\isKeyExistsInFirst($diff)) {
-        $isValueComplex = \Gendiff\Diff\isFirstValueComplex($diff);
-        $value = \Gendiff\Diff\getValue($diff);
+    if (\Differ\Differ\isKeyExistsInFirst($diff)) {
+        $isValueComplex = \Differ\Differ\isFirstValueComplex($diff);
+        $value = \Differ\Differ\getValue($diff);
         $value = formatValueToStylish($value, $isValueComplex, $debt);
         $spaceBeforeValue = $value === '' ? '' : ' ';
         $symbolAfterValue = $isValueComplex ? '' : "\n";
     }
 
-    if (\Gendiff\Diff\isKeyExistsInSecond($diff)) {
-        $isNewValueComplex = \Gendiff\Diff\isSecondValueComplex($diff);
-        $newValue = \Gendiff\Diff\getnewValue($diff);
+    if (\Differ\Differ\isKeyExistsInSecond($diff)) {
+        $isNewValueComplex = \Differ\Differ\isSecondValueComplex($diff);
+        $newValue = \Differ\Differ\getnewValue($diff);
         $newValue = formatValueToStylish($newValue, $isNewValueComplex, $debt);
         $spaceBeforeNewValue = $newValue === '' ? '' : ' ';
         $symbolAfterNewValue = $isNewValueComplex ? '' : "\n";
     }
 
     $margin = getMarginLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
-    $diffStatus = \Gendiff\Diff\getDiffStatus($diff);
+    $diffStatus = \Differ\Differ\getDiffStatus($diff);
     switch ($diffStatus) {
         case DiffStatus::noDifference:
             $output  = $margin . STYLISH_NO_DIFFERENCE . $key  . ":" . $spaceBeforeValue . $value  . $symbolAfterValue;
@@ -166,7 +166,7 @@ function stylishDumpDiff($key, $diff, $debt)
             $output = $result1 . $result2;
             break;
         case DiffStatus::parentDiffNode:
-            $child = \Gendiff\Diff\getChild($diff);
+            $child = \Differ\Differ\getChild($diff);
             $output = $margin . STYLISH_NO_DIFFERENCE . $key . ": " . stylishDumpDiffCol($child, ($debt + 1));
             break;
         default:
