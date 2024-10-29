@@ -1,5 +1,7 @@
 <?php
 
+namespace Differ\Tests\Diff;
+
 use PHPUnit\Framework\TestCase;
 use Differ\Differ;
 use Differ\Formatters;
@@ -7,16 +9,11 @@ use Differ\Parser\SourceType;
 
 class DiffTest extends TestCase
 {
-
-
-
-      public function testDiffColl(): void
-      {
-      
+    public function testDiffColl(): void
+    {
           $pathToCol1 =  __DIR__ . '/fixtures/Col1';
           $pathToCol2 =  __DIR__ . '/fixtures/Col2';
           $pathToExpected =  __DIR__ . '/fixtures/DiffCol';
-          
           $expected = file_get_contents($pathToExpected);
           $expected = unserialize($expected);
 
@@ -27,11 +24,6 @@ class DiffTest extends TestCase
           $col2 = unserialize($col2);
 
           $diffCol = \Differ\Differ\makeDiffCollection($col1, $col2);
-    
-         
           $this->assertEquals($expected, $diffCol);
-
-        }
-
+    }
 }
-

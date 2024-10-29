@@ -1,14 +1,14 @@
 <?php
 
+namespace Differ\Tests\Formatters;
+
 use PHPUnit\Framework\TestCase;
 use Differ\Parser;
 use Differ\Formatters;
-
+use Exception;
 
 class FormattersTest extends TestCase
 {
-
-
     public function testStylishFormatter(): void
     {
         $expected = file_get_contents(__DIR__ . '/fixtures/TestStylishFormatter/expected');
@@ -53,12 +53,11 @@ class FormattersTest extends TestCase
         $pathToExpected =  __DIR__ . '/fixtures/ExpectedDiffCol';
         $pathToCol1 =  __DIR__ . '/fixtures/ExpectedCol1';
         $pathToCol2 =  __DIR__ . '/fixtures/ExpectedCol2';
-        
+
         $expected = file_get_contents($pathToExpected);
         $expected = unserialize($expected);
 
         $this->expectException(Exception::class);
         $formatted = \Differ\Formatters\getFormattedDiffCol($diffCol, '');
-      
     }
 }
