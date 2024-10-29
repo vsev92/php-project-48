@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0e84b3f60a731e7e04062a047506706e",
+    "content-hash": "fb418acfa7ead25d1aa3f069ce8fa6de",
     "packages": [
         {
             "name": "docopt/docopt",
@@ -135,16 +135,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v7.0.0-BETA1",
+            "version": "v7.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "60bb70d63af1b4e2e6fe46fe389cf169a703bd62"
+                "reference": "0055b230c408428b9b5cde7c55659555be5c0278"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/60bb70d63af1b4e2e6fe46fe389cf169a703bd62",
-                "reference": "60bb70d63af1b4e2e6fe46fe389cf169a703bd62",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/0055b230c408428b9b5cde7c55659555be5c0278",
+                "reference": "0055b230c408428b9b5cde7c55659555be5c0278",
                 "shasum": ""
             },
             "require": {
@@ -186,7 +186,7 @@
             "description": "Loads and dumps YAML files",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/yaml/tree/v7.0.0-BETA1"
+                "source": "https://github.com/symfony/yaml/tree/v7.0.0"
             },
             "funding": [
                 {
@@ -202,7 +202,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-27T14:05:33+00:00"
+            "time": "2023-11-07T10:26:03+00:00"
         }
     ],
     "packages-dev": [
@@ -1996,6 +1996,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "docopt/docopt": 20,
+        "symfony/yaml": 20,
         "squizlabs/php_codesniffer": 20,
         "phpunit/phpunit": 20
     },

@@ -13,7 +13,7 @@
     "minimum-stability": "dev",
     "require": {
         "docopt/docopt": "1.0.*@dev",
-        "symfony/yaml": "7.0.0-BETA1"
+        "symfony/yaml": "7@dev"
     },
     "autoload-dev": {
     "psr-4": {
