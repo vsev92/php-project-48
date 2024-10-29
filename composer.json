@@ -1,5 +1,6 @@
 {
     "name": "hexlet/code",
+    "bin": ["bin/gendiff"],
     "description": "gendiff project",
     "type": "project",
     "license": "MIT",
@@ -11,7 +12,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "docopt/docopt": "dev-master",
+        "docopt/docopt": "1.0.5",
         "symfony/yaml": "7.2.x-dev"
     },
     "autoload-dev": {
@@ -36,10 +37,6 @@
 
  
        ]    
-    },
-    "bin": [
-        "bin/gendiff"
-
-    ]
+    }
 
 }
