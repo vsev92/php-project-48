@@ -178,7 +178,7 @@ function stylishDumpDiff($key, $diff, $debt)
 function formatValueToStylish($value, $isComplexValue, $debt)
 {
     if ($isComplexValue) {
-        return getStylishFromComplexValue($value, ($debt + 1), $formatName);
+        return getStylishFromComplexValue($value, ($debt + 1));
     } else {
         return getStylishValueEncode($value);
     }
@@ -188,7 +188,7 @@ function getStylishFromComplexValue($complexValue, $debt)
 {
         $keys = array_keys($complexValue);
         $braceMargin = getMarginLeft(($debt - 1), STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_BRACES);
-        $elements = array_reduce($keys, function ($acc, $key) use ($complexValue, $debt, $formatName) {
+        $elements = array_reduce($keys, function ($acc, $key) use ($complexValue, $debt) {
                 $margin = getMarginLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
                 $ValueIsArray = is_array($complexValue[$key]);
                 $value = formatValueToStylish($complexValue[$key], $ValueIsArray, ($debt));

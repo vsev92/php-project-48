@@ -9,7 +9,7 @@ use  Symfony\Component\Yaml\Yaml;
 use  Exception;
 
 /////////// functions for make diff objects
-function genDiff($pathToFile1, $pathToFile2, $formatName)
+function genDiff($pathToFile1, $pathToFile2, $formatName = 'stylish')
 {
         $sourceType1 = \Differ\Parser\getSourceType($pathToFile1);
         $sourceType2 = \Differ\Parser\getSourceType($pathToFile2);
