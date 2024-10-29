@@ -1,1 +1,0 @@
-a:3:{s:6:"common";a:4:{s:8:"setting1";s:7:"Value 1";s:8:"setting2";i:200;s:8:"setting3";b:1;s:8:"setting6";a:2:{s:3:"key";s:5:"value";s:4:"doge";a:1:{s:3:"wow";s:0:"";}}}s:6:"group1";a:3:{s:3:"baz";s:3:"bas";s:3:"foo";s:3:"bar";s:4:"nest";a:1:{s:3:"key";s:5:"value";}}s:6:"group2";a:2:{s:3:"abc";i:12345;s:4:"deep";a:1:{s:2:"id";i:45;}}}
