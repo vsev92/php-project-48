@@ -152,17 +152,17 @@ function stylishDumpDiff($key, $diff, $debt)
     $diffStatus = \Differ\Differ\getDiffStatus($diff);
     switch ($diffStatus) {
         case DiffStatus::noDifference:
-            $output  = $margin . STYLISH_NO_DIFFERENCE . $key  . ":" . $spaceBeforeValue . $value  . $symbolAfterValue;
+            $output  = $margin . STYLISH_NO_DIFFERENCE . $key  . ": " . $value  . $symbolAfterValue;
             break;
         case DiffStatus::added:
-            $output = $margin . STYLISH_ADDDED . $key  . ":" . $spaceBeforeNewValue . $newValue  . $symbolAfterNewValue;
+            $output = $margin . STYLISH_ADDDED . $key  . ": " . $newValue  . $symbolAfterNewValue;
             break;
         case DiffStatus::removed:
-            $output = $margin . STYLISH_REMOVED . $key  . ":" . $spaceBeforeValue . $value  . $symbolAfterValue;
+            $output = $margin . STYLISH_REMOVED . $key  . ": " . $value  . $symbolAfterValue;
             break;
         case DiffStatus::updated:
-            $result1 = $margin . STYLISH_REMOVED . $key  . ":" . $spaceBeforeValue . $value  . $symbolAfterValue;
-            $result2 = $margin . STYLISH_ADDDED . $key . ":" . $spaceBeforeNewValue . $newValue  . $symbolAfterNewValue;
+            $result1 = $margin . STYLISH_REMOVED . $key  . ": " . $value  . $symbolAfterValue;
+            $result2 = $margin . STYLISH_ADDDED . $key . ": " . $newValue  . $symbolAfterNewValue;
             $output = $result1 . $result2;
             break;
         case DiffStatus::parentDiffNode:
