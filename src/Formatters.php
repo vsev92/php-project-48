@@ -119,36 +119,18 @@ const STYLISH_NO_DIFFERENCE = '  ';
 
 function stylishDumpDiff(string $key, array $diff, int $debt)
 {
-    $value = null;
-    $newValue = null;
-    if (\Differ\Differ\isKeyExistsInFirst($diff)) {
-        $isValueComplex = \Differ\Differ\isFirstValueComplex($diff);
-        $value = \Differ\Differ\getValue($diff);
-        $formattedValue = formatValueToStylish($value, $isValueComplex, $debt);
-       // $spaceBeforeValue = $value === '' ? '' : ' ';
-        $symbolAfterValue = $isValueComplex ? '' : "\n";
-    }
-
-    if (\Differ\Differ\isKeyExistsInSecond($diff)) {
-        $isNewValueComplex = \Differ\Differ\isSecondValueComplex($diff);
-        $newValue = \Differ\Differ\getnewValue($diff);
-        $formattedNewValue = formatValueToStylish($newValue, $isNewValueComplex, $debt);
-       // $spaceBeforeNewValue = $newValue === '' ? '' : ' ';
-        $symbolAfterNewValue = $isNewValueComplex ? '' : "\n";
-    }
-
     $margin = getMarginLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
     $diffStatus = \Differ\Differ\getDiffStatus($diff);
     switch ($diffStatus) {
         case DiffStatus::noDifference:
-            return $margin . STYLISH_NO_DIFFERENCE . $key  . ": " . $formattedValue . $symbolAfterValue;
+            return $margin . STYLISH_NO_DIFFERENCE . $key  . ": " . getFormattedValue($diff, $debt) . getSymbolAfterValue($diff);
         case DiffStatus::added:
-            return $margin . STYLISH_ADDDED . $key  . ": " . $formattedNewValue  . $symbolAfterNewValue;
+            return $margin . STYLISH_ADDDED . $key  . ": " . getFormattedNewValue($diff, $debt)  . getSymbolAfterNewValue($diff);
         case DiffStatus::removed:
-            return $margin . STYLISH_REMOVED . $key  . ": " . $formattedValue . $symbolAfterValue;
+            return $margin . STYLISH_REMOVED . $key  . ": " . getFormattedValue($diff, $debt) . getSymbolAfterValue($diff);
         case DiffStatus::updated:
-            $result1 = $margin . STYLISH_REMOVED . $key  . ": " . $formattedValue  . $symbolAfterValue;
-            $result2 = $margin . STYLISH_ADDDED . $key . ": " . $formattedNewValue  . $symbolAfterNewValue;
+            $result1 = $margin . STYLISH_REMOVED . $key  . ": " . getFormattedValue($diff, $debt)  . getSymbolAfterValue($diff);
+            $result2 = $margin . STYLISH_ADDDED . $key . ": " . getFormattedNewValue($diff, $debt)  . getSymbolAfterNewValue($diff);
             return $result1 . $result2;
         case DiffStatus::parentDiffNode:
             $child = \Differ\Differ\getChild($diff);
@@ -158,7 +140,33 @@ function stylishDumpDiff(string $key, array $diff, int $debt)
     }
 }
 
-function formatValueToStylish(mixed $value, bool $isComplexValue, int $debt)
+function getSymbolAfterValue(array $diff)
+{
+    $result = \Differ\Differ\isFirstValueComplex($diff) ? '' : "\n";
+    return $result;
+}
+
+function getSymbolAfterNewValue(array $diff)
+{
+    $result = \Differ\Differ\isSecondValueComplex($diff) ? '' : "\n";
+    return $result;
+}
+
+function getFormattedValue(array $diff, int $debt)
+{
+    $value = \Differ\Differ\getValue($diff);
+    $isValueComplex = \Differ\Differ\isFirstValueComplex($diff);
+    return formatToStylish($value, $isValueComplex, $debt);
+}
+
+function getFormattedNewValue(array $diff, int $debt)
+{
+    $NewValue = \Differ\Differ\getNewValue($diff);
+    $isNewValueComplex = \Differ\Differ\isSecondValueComplex($diff);
+    return formatToStylish($NewValue, $isNewValueComplex, $debt);
+}
+
+function formatToStylish(mixed $value, bool $isComplexValue, int $debt)
 {
     if ($isComplexValue) {
         return getStylishFromComplexValue($value, ($debt + 1));
@@ -167,6 +175,8 @@ function formatValueToStylish(mixed $value, bool $isComplexValue, int $debt)
     }
 }
 
+
+
 function getStylishFromComplexValue(array $complexValue, int $debt)
 {
         $keys = array_keys($complexValue);
@@ -174,7 +184,7 @@ function getStylishFromComplexValue(array $complexValue, int $debt)
         $elements = array_reduce($keys, function ($acc, $key) use ($complexValue, $debt) {
                 $margin = getMarginLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
                 $ValueIsArray = is_array($complexValue[$key]);
-                $value = formatValueToStylish($complexValue[$key], $ValueIsArray, ($debt));
+                $value = formatToStylish($complexValue[$key], $ValueIsArray, ($debt));
                 $spaceBeforeValue = mb_strlen($value) > 0 ? ' ' : '';
                 $symbolAfterValue = $ValueIsArray ? '' : "\n";
                 $newAcc = $acc . $margin . '  ' . $key . ":" . $spaceBeforeValue . $value . $symbolAfterValue;

@@ -25,8 +25,7 @@ function makeDiffCollection(array $collection1, array $collection2)
         $keys =  getUniqueKeys($collection1, $collection2);
         $diffColl =  array_reduce($keys, function ($acc, $key) use ($collection1, $collection2) {
                 $diff = makeDiff($key, $collection1, $collection2);
-                $newAcc = $acc;
-                $newAcc[$key] = $diff;
+                $newAcc = [...$acc, $key => $diff];
                 return $newAcc;
         }, []);
         return $diffColl;
