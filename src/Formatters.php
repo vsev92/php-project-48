@@ -107,7 +107,6 @@ const STYLISH_OFFSET_TO_LEFT_BRACES = 0;
 function getMarginLeft(int $debt, int $spaceCountPerLevel, int $offsetToLeft)
 {
     $repeatCount = $debt * $spaceCountPerLevel - $offsetToLeft;
-    //$repeatCount = $repeatCount < 0 ? 0 : $repeatCount;
     return str_repeat(" ", $repeatCount);
 }
 
