@@ -25,8 +25,9 @@ function makeDiffCollection(array $collection1, array $collection2)
         $keys =  getUniqueKeys($collection1, $collection2);
         $diffColl =  array_reduce($keys, function ($acc, $key) use ($collection1, $collection2) {
                 $diff = makeDiff($key, $collection1, $collection2);
-                $acc[$key] = $diff;
-                return $acc;
+                $newAcc = $acc;
+                $newAcc[$key] = $diff;
+                return $newAcc;
         }, []);
         return $diffColl;
 }
@@ -119,9 +120,9 @@ function getUniqueKeys(array $Collection1, array $Collection2)
         $keys1 = array_keys($Collection1);
         $keys2 = array_keys($Collection2);
         $commonKeysCollection = array_merge($keys1, $keys2);
-        $commonKeysCollection = array_unique($commonKeysCollection, SORT_STRING);
-        sort($commonKeysCollection, SORT_STRING);
-        return $commonKeysCollection;
+        $uniqueKeysCollection = array_unique($commonKeysCollection, SORT_STRING);
+        sort($uniqueKeysCollection, SORT_STRING);
+        return $uniqueKeysCollection;
 }
 
 
@@ -132,7 +133,7 @@ function getDiffStatus(array $diff)
 
 function hasChild(array $diff)
 {
-       return $diff['diffStatus'] === diffStatus::parentDiffNode;
+       return $diff['diffStatus'] === DiffStatus::parentDiffNode;
 }
 function getChild(array $diff)
 {
