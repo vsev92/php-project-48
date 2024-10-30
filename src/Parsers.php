@@ -13,15 +13,17 @@ enum SourceType
     case unsupported;
 }
 
+const JSON_DECODE_ASSOC = true;
+
 function parseFromFile(string $filePath, SourceType $sourceFileType)
 {
     if (file_exists($filePath)) {
         $data = file_get_contents($filePath);
         switch ($sourceFileType) {
             case SourceType::json:
-                return json_decode($data, true);
+                return json_decode((string)$data, JSON_DECODE_ASSOC);
             case SourceType::yaml:
-                return Yaml::parse($data);
+                return Yaml::parse((string)$data);
             default:
                 throw new InvalidArgumentException('wrong file extension' . $filePath);
         }
@@ -30,7 +32,7 @@ function parseFromFile(string $filePath, SourceType $sourceFileType)
     }
 }
 
-function getSourceType($filePath)
+function getSourceType(string $filePath)
 {
     if (str_ends_with($filePath, '.json')) {
         return SourceType::json;

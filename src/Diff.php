@@ -9,7 +9,7 @@ use  Symfony\Component\Yaml\Yaml;
 use  Exception;
 
 /////////// functions for make diff objects
-function genDiff($pathToFile1, $pathToFile2, $formatName = 'stylish')
+function genDiff(string $pathToFile1, string $pathToFile2, string $formatName = 'stylish')
 {
         $sourceType1 = \Differ\Parser\getSourceType($pathToFile1);
         $sourceType2 = \Differ\Parser\getSourceType($pathToFile2);
@@ -20,7 +20,7 @@ function genDiff($pathToFile1, $pathToFile2, $formatName = 'stylish')
 }
 
 
-function makeDiffCollection($collection1, $collection2)
+function makeDiffCollection(array $collection1, array $collection2)
 {
         $keys =  getUniqueKeys($collection1, $collection2);
         $diffColl =  array_reduce($keys, function ($acc, $key) use ($collection1, $collection2) {
@@ -31,24 +31,22 @@ function makeDiffCollection($collection1, $collection2)
         return $diffColl;
 }
 
-function makeDiff($key, $collection1, $collection2)
+function makeDiff(string $key, array $collection1, array $collection2)
 {
-    $diff = [];
     $ExistInCollection1 = array_key_exists($key, $collection1);
     $ExistInCollection2 = array_key_exists($key, $collection2);
     $ValueIsArray1 = $ExistInCollection1 && is_array($collection1[$key]);
     $ValueIsArray2 = $ExistInCollection2 && is_array($collection2[$key]);
     if ($ExistInCollection1 && $ExistInCollection2) {
-        $diff = getDiffForBothExistsValues($collection1[$key], $collection2[$key]);
+        return getDiffForBothExistsValues($collection1[$key], $collection2[$key]);
     } else {
         if (!$ExistInCollection1) {
-                $diff = getDiffForOnlySecondExistValue($collection2[$key]);
+                return getDiffForOnlySecondExistValue($collection2[$key]);
         }
         if (!$ExistInCollection2) {
-                $diff = getDiffForOnlyFirstExistValue($collection1[$key]);
+                return getDiffForOnlyFirstExistValue($collection1[$key]);
         }
     }
-    return $diff;
 }
 
 enum DiffStatus: string
@@ -60,7 +58,7 @@ enum DiffStatus: string
     case parentDiffNode = 'parentDiffNode';
 }
 
-function getDiffForBothExistsValues($value1, $value2)
+function getDiffForBothExistsValues(mixed $value1, mixed $value2)
 {
         $ValueIsArray1 = is_array($value1);
         $ValueIsArray2 = is_array($value2);
@@ -95,7 +93,7 @@ function getDiffForBothExistsValues($value1, $value2)
 
 
 
-function getDiffForOnlyFirstExistValue($leftValue)
+function getDiffForOnlyFirstExistValue(mixed $leftValue)
 {
         $ValueIsArray = is_array($leftValue);
         $diff  = [
@@ -105,7 +103,7 @@ function getDiffForOnlyFirstExistValue($leftValue)
         return $diff;
 }
 
-function getDiffForOnlySecondExistValue($rightValue)
+function getDiffForOnlySecondExistValue(mixed $rightValue)
 {
         $valueIsArray = is_array($rightValue);
         $diff = [
@@ -116,7 +114,7 @@ function getDiffForOnlySecondExistValue($rightValue)
 }
 
 
-function getUniqueKeys($Collection1, $Collection2)
+function getUniqueKeys(array $Collection1, array $Collection2)
 {
         $keys1 = array_keys($Collection1);
         $keys2 = array_keys($Collection2);
@@ -127,28 +125,28 @@ function getUniqueKeys($Collection1, $Collection2)
 }
 
 
-function getDiffStatus($diff)
+function getDiffStatus(array $diff)
 {
        return $diff['diffStatus'];
 }
 
-function hasChild($diff)
+function hasChild(array $diff)
 {
        return $diff['diffStatus'] === diffStatus::parentDiffNode;
 }
-function getChild($diff)
+function getChild(array $diff)
 {
        $child =  hasChild($diff) ? $diff['Child'] : throw new Exception("no child in diff");
        return $child;
 }
 
 
-function isKeyExistsInFirst($diff)
+function isKeyExistsInFirst(array $diff)
 {
        return  array_key_exists('value', $diff);
 }
 
-function getValue($diff)
+function getValue(array $diff)
 {
     if (isKeyExistsInFirst($diff)) {
         return $diff['value'];
@@ -157,12 +155,12 @@ function getValue($diff)
     }
 }
 
-function isKeyExistsInSecond($diff)
+function isKeyExistsInSecond(array $diff)
 {
         return  array_key_exists('newValue', $diff);
 }
 
-function getNewValue($diff)
+function getNewValue(array $diff)
 {
     if (isKeyExistsInSecond($diff)) {
         return $diff['newValue'];
@@ -171,12 +169,12 @@ function getNewValue($diff)
     }
 }
 
-function isFirstValueComplex($diff)
+function isFirstValueComplex(array $diff)
 {
        return  is_array(getValue($diff));
 }
 
-function isSecondValueComplex($diff)
+function isSecondValueComplex(array $diff)
 {
         return  is_array(getNewValue($diff));
 }

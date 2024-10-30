@@ -51,13 +51,14 @@ class FormattersTest extends TestCase
     public function testGetFormattedDiffCol(): void
     {
         $pathToExpected =  __DIR__ . '/fixtures/ExpectedDiffCol';
-        $pathToCol1 =  __DIR__ . '/fixtures/ExpectedCol1';
-        $pathToCol2 =  __DIR__ . '/fixtures/ExpectedCol2';
-
         $expected = file_get_contents($pathToExpected);
         $expected = unserialize($expected);
 
+        $pathToDiffCol =  __DIR__ . '/fixtures/DiffCol';
+        $diffCol = file_get_contents($pathToDiffCol);
+        $diffCol = unserialize($diffCol);
+
         $this->expectException(Exception::class);
-        $formatted = \Differ\Formatters\getFormattedDiffCol($diffCol, '');
+        $formatted = \Differ\Formatters\getFormattedDiffCol($diffCol, 'unknown');
     }
 }
