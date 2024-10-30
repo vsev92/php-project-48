@@ -71,7 +71,7 @@ function getPlainValueEncode(mixed $value)
     $type = gettype($value);
     switch ($type) {
         case "boolean":
-            return $value ? "true" : "false";
+            return (bool)$value ? "true" : "false";
         case "NULL":
             return "null";
         case "array":
@@ -80,7 +80,6 @@ function getPlainValueEncode(mixed $value)
             return "'{$value}'";
         default:
             return  $value;
-            break;
     }
 }
 
@@ -93,8 +92,8 @@ function stylishDumpDiffCol(array $diffCol, int $debt = 1)
     $formatted = array_reduce($keys, function ($acc, $key) use ($debt, $diffCol) {
             $margin = getMarginLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
             $formattedDiff = stylishDumpDiff($key, $diffCol[$key], $debt);
-            $acc  = $acc . $formattedDiff;
-            return $acc;
+            $newAcc  = $acc . $formattedDiff;
+            return $newAcc;
     }, '');
 
     $braceMargin = getMarginLeft(($debt - 1), STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_BRACES);
@@ -121,20 +120,27 @@ function stylishDumpDiff(string $key, array $diff, int $debt)
 {
     $margin = getMarginLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
     $diffStatus = \Differ\Differ\getDiffStatus($diff);
+    $stylishKeyToAdded = $margin . STYLISH_ADDDED . $key  . ": ";
+    $stylishKeyToRemoved = $margin . STYLISH_REMOVED . $key  . ": ";
+    $stylishKeyNoDifference = $margin . STYLISH_NO_DIFFERENCE . $key  . ": ";
+
     switch ($diffStatus) {
         case DiffStatus::noDifference:
-            return $margin . STYLISH_NO_DIFFERENCE . $key  . ": " . getFormattedValue($diff, $debt) . getSymbolAfterValue($diff);
+            $stylishValue = getFormattedValue($diff, $debt) . getSymbolAfterValue($diff);
+            return $stylishKeyNoDifference . $stylishValue;
         case DiffStatus::added:
-            return $margin . STYLISH_ADDDED . $key  . ": " . getFormattedNewValue($diff, $debt)  . getSymbolAfterNewValue($diff);
+            $stylishValue = getFormattedNewValue($diff, $debt)  . getSymbolAfterNewValue($diff);
+            return $stylishKeyToAdded . $stylishValue;
         case DiffStatus::removed:
-            return $margin . STYLISH_REMOVED . $key  . ": " . getFormattedValue($diff, $debt) . getSymbolAfterValue($diff);
+            $stylishValue = getFormattedValue($diff, $debt) . getSymbolAfterValue($diff);
+            return $stylishKeyToRemoved . $stylishValue;
         case DiffStatus::updated:
-            $result1 = $margin . STYLISH_REMOVED . $key  . ": " . getFormattedValue($diff, $debt)  . getSymbolAfterValue($diff);
-            $result2 = $margin . STYLISH_ADDDED . $key . ": " . getFormattedNewValue($diff, $debt)  . getSymbolAfterNewValue($diff);
-            return $result1 . $result2;
+            $stylishValue = getFormattedValue($diff, $debt)  . getSymbolAfterValue($diff);
+            $stylishNewValue = getFormattedNewValue($diff, $debt)  . getSymbolAfterNewValue($diff);
+            return $stylishKeyToRemoved . $stylishValue . $stylishKeyToAdded . $stylishNewValue;
         case DiffStatus::parentDiffNode:
             $child = \Differ\Differ\getChild($diff);
-            return $margin . STYLISH_NO_DIFFERENCE . $key . ": " . stylishDumpDiffCol($child, ($debt + 1));
+            return $stylishKeyNoDifference . stylishDumpDiffCol($child, ($debt + 1));
         default:
             return '';
     }

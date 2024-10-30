@@ -7,6 +7,7 @@ use  Differ\Parser;
 use  Differ\Parser\SourceType;
 use  Symfony\Component\Yaml\Yaml;
 use  Exception;
+use  SplMinHeap;
 
 /////////// functions for make diff objects
 function genDiff(string $pathToFile1, string $pathToFile2, string $formatName = 'stylish')
@@ -120,8 +121,15 @@ function getUniqueKeys(array $Collection1, array $Collection2)
         $keys2 = array_keys($Collection2);
         $commonKeysCollection = array_merge($keys1, $keys2);
         $uniqueKeysCollection = array_unique($commonKeysCollection, SORT_STRING);
-        sort($uniqueKeysCollection, SORT_STRING);
-        return $uniqueKeysCollection;
+        $sortedKeysCollection = iterator_to_array(array_reduce(
+            array_filter($uniqueKeysCollection),
+            function ($heap, $element) {
+                    $heap->insert($element);
+                    return $heap;
+            },
+            new SplMinHeap()
+        ));
+        return $sortedKeysCollection;
 }
 
 
