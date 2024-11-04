@@ -14,7 +14,7 @@
     "require": {
         "docopt/docopt": "1.0.*@dev",
         "symfony/yaml": "7@dev",
-        "lstrojny/functional-php": "dev-main"
+        "lstrojny/functional-php": "1.17"
     },
 
     "require-dev": {

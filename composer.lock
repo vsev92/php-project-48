@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22522196a945c7eb919916219f19f0f9",
+    "content-hash": "27b101a6e870bcad0d79b6fca38e6a89",
     "packages": [
         {
             "name": "docopt/docopt",
@@ -55,16 +55,16 @@
         },
         {
             "name": "lstrojny/functional-php",
-            "version": "dev-main",
+            "version": "1.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lstrojny/functional-php.git",
-                "reference": "5f5ddb6e7e005bd7413060f842d45f782ee240bb"
+                "reference": "e459d5cb307bc6e10e9e992c4e96bb71a0262506"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lstrojny/functional-php/zipball/5f5ddb6e7e005bd7413060f842d45f782ee240bb",
-                "reference": "5f5ddb6e7e005bd7413060f842d45f782ee240bb",
+                "url": "https://api.github.com/repos/lstrojny/functional-php/zipball/e459d5cb307bc6e10e9e992c4e96bb71a0262506",
+                "reference": "e459d5cb307bc6e10e9e992c4e96bb71a0262506",
                 "shasum": ""
             },
             "require": {
@@ -75,7 +75,6 @@
                 "phpunit/phpunit": "^7.0 || ^8.0 || ^9.5",
                 "squizlabs/php_codesniffer": "~3.0"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -96,7 +95,6 @@
                     "src/Functional/DropFirst.php",
                     "src/Functional/DropLast.php",
                     "src/Functional/Each.php",
-                    "src/Functional/Entries.php",
                     "src/Functional/Equal.php",
                     "src/Functional/ErrorToException.php",
                     "src/Functional/Every.php",
@@ -108,7 +106,6 @@
                     "src/Functional/FlatMap.php",
                     "src/Functional/Flatten.php",
                     "src/Functional/Flip.php",
-                    "src/Functional/FromEntries.php",
                     "src/Functional/GreaterThan.php",
                     "src/Functional/GreaterThanOrEqual.php",
                     "src/Functional/Group.php",
@@ -200,7 +197,7 @@
             ],
             "support": {
                 "issues": "https://github.com/lstrojny/functional-php/issues",
-                "source": "https://github.com/lstrojny/functional-php/tree/main"
+                "source": "https://github.com/lstrojny/functional-php/tree/1.17.0"
             },
             "funding": [
                 {
@@ -208,7 +205,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-11-29T15:47:51+00:00"
+            "time": "2021-03-07T00:25:34+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
