@@ -24,8 +24,11 @@
     "autoload": {
         "files": [
                     "src/Parsers.php",
-                    "src/Diff.php",
-                    "src/Formatters.php"
+                    "src/Differ.php",
+                    "src/Formatters/Formatter.php",
+                    "src/Formatters/PlainFormatter.php",
+                    "src/Formatters/StylishFormatter.php",
+                    "src/Formatters/JsonFormatter.php"
         ]    
     }
 

@@ -2,23 +2,23 @@
 
 namespace Differ\Differ;
 
-use  Differ\Formatters;
-use  Differ\Parser;
 use  Differ\Parser\SourceType;
 use  Symfony\Component\Yaml\Yaml;
 use  Exception;
 
 use function Functional\sort;
+use function Differ\Parsers\getSourceType;
+use function Differ\Parsers\parseFromFile;
+use function Differ\Formatter\getFormattedDiffCol;
 
-/////////// functions for make diff objects
 function genDiff(string $pathToFile1, string $pathToFile2, string $formatName = 'stylish')
 {
-        $sourceType1 = \Differ\Parser\getSourceType($pathToFile1);
-        $sourceType2 = \Differ\Parser\getSourceType($pathToFile2);
-        $collection1 = \Differ\Parser\parseFromFile($pathToFile1, $sourceType1);
-        $collection2  = \Differ\Parser\parseFromFile($pathToFile2, $sourceType2);
+        $sourceType1 = getSourceType($pathToFile1);
+        $sourceType2 = getSourceType($pathToFile2);
+        $collection1 = parseFromFile($pathToFile1, $sourceType1);
+        $collection2  = parseFromFile($pathToFile2, $sourceType2);
         $diffCol = makeDiffCollection($collection1, $collection2);
-        return \Differ\Formatters\getFormattedDiffCol($diffCol, $formatName);
+        return getFormattedDiffCol($diffCol, $formatName);
 }
 
 

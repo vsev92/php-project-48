@@ -1,3 +1,17 @@
+Generate diff
+
+Usage:
+  gendiff (-h|--help)
+  gendiff (-v|--version)
+  gendiff [--format <fmt>] <firstFile> <secondFile>
+
+Options:
+  -h --help                     Show this screen
+  -v --version                  Show version
+  --format <fmt>                Report format [default: stylish]
+
+
+
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/vsev92/php-project-48/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/vsev92/php-project-48/actions)
 

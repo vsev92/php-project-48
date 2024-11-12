@@ -1,7 +1,5 @@
 install:
 	composer install
-gendiff:
-	./bin/gendiff
 test:
 	composer exec --verbose phpunit tests
 test-coverage-clover:

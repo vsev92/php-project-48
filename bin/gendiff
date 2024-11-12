@@ -9,10 +9,9 @@ if (file_exists($autoloadPath1)) {
     require_once $autoloadPath2;
 }
 
-use Gendiff\Parser;
-use Gendiff\Diff;
 
-$docPath = __DIR__ . '/../src/doc.md';
+
+$docPath = __DIR__ . '/../README.md';
 $doc = file_get_contents($docPath);
 $args = (new \Docopt\Handler)->handle($doc);
 
