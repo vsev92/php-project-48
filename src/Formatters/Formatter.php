@@ -1,6 +1,6 @@
 <?php
 
-namespace Differ\Formatter;
+namespace Differ\DiffColFormatter;
 
 use Exception;
 

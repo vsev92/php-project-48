@@ -1,5 +1,4 @@
 /vendor/
 /build/
-/bin/tmp/
 /.phpunit.cache/
-/tests/old/
+
