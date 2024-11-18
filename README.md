@@ -23,6 +23,10 @@ Options:
 ### Codeclimate Test Coverage status:
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a39e0b4c3d33d7738a43/test_coverage)](https://codeclimate.com/github/vsev92/php-project-48/test_coverage)
 
+### Code-coverage test status:
+[![code-coverage](https://github.com/vsev92/php-project-48/actions/workflows/code-coverage.yml/badge.svg)](https://github.com/vsev92/php-project-48/actions/workflows/code-coverage.yml)
+
+
 ## Prerequisites
 
 * Linux
@@ -46,5 +50,6 @@ make install
 
 ### Asciinema gendiffDemo:
 [![Asciinema] (https://asciinema.org/a/y9ud4gzhnMEJ09DZ24Z994Tlo)] (https://asciinema.org/a/y9ud4gzhnMEJ09DZ24Z994Tlo)
+
 
 
