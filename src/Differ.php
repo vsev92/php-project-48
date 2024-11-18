@@ -9,7 +9,7 @@ use  Exception;
 use function Functional\sort;
 use function Differ\Parsers\getSourceType;
 use function Differ\Parsers\parseFromFile;
-use function Differ\DiffColFormatter\getFormattedDiffCol;
+use function Differ\Formatters\getFormattedDiffCol;
 
 function genDiff(string $pathToFile1, string $pathToFile2, string $formatName = 'stylish')
 {

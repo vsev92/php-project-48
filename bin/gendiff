@@ -11,9 +11,22 @@ if (file_exists($autoloadPath1)) {
 
 
 
-$docPath = __DIR__ . '/../README.md';
-$doc = file_get_contents($docPath);
-$args = (new \Docopt\Handler)->handle($doc);
+//$docPath = __DIR__ . '/../README.md';
+//$doc = file_get_contents($docPath);
+$doc = <<<DOC
+Usage:
+  gendiff (-h|--help)
+  gendiff (-v|--version)
+  gendiff [--format <fmt>] <firstFile> <secondFile>
+
+Options:
+  -h --help                     Show this screen
+  -v --version                  Show version
+  --format <fmt>                Report format [default: stylish]
+
+DOC;
+$handler = new \Docopt\Handler(array('help'=>true,'version'=>"1.0.0"));
+$args = $handler->handle($doc);
 
 $pathToFile1 = $args['<firstFile>'];
 $pathToFile2 = $args['<secondFile>'];
