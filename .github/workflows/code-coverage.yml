@@ -35,3 +35,5 @@ jobs:
           coverageCommand: make test-coverage-clover
           coverageLocations: build/logs/clover.xml:clover
           debug: true
+      - name: Lint
+        run: make lint        
