@@ -20,85 +20,39 @@ function genDiff(string $pathToFile1, string $pathToFile2, string $formatName = 
         return getFormattedDiffCol($diffCol, $formatName);
 }
 
-
 function makeDiffCollection(array $collection1, array $collection2)
 {
         $keys =  getUniqueKeys($collection1, $collection2);
         $diffColl =  array_reduce($keys, function ($acc, $key) use ($collection1, $collection2) {
-                $diff = makeDiff($key, $collection1, $collection2);
-                $newAcc = [...$acc, $key => $diff];
-                return $newAcc;
+                if (!array_key_exists($key, $collection1)) {
+                        return [...$acc, $key => ['diffStatus' => DiffStatus::added, 'newValue' => $collection2[$key]]];
+                }
+
+                if (!array_key_exists($key, $collection2)) {
+                        return [...$acc, $key => ['diffStatus' => DiffStatus::removed, 'value' => $collection1[$key]]];
+                }
+
+                $value1 = $collection1[$key];
+                $value2 = $collection2[$key];
+
+                if (is_array($value1) && is_array($value2)) {
+                        $childDiffColl = makeDiffCollection($collection1[$key], $collection2[$key]);
+                        return [...$acc, $key => ['diffStatus' => DiffStatus::parentDiffNode, 'Child' => $childDiffColl]];
+                }
+
+                if ($value1 === $value2) {
+                        return [...$acc, $key => ['diffStatus' => DiffStatus::noDifference, 'value' => $value1]];
+                }
+                
+                return [...$acc, $key => ['diffStatus' => DiffStatus::updated, 
+                                          'value' => $value1,
+                                          'newValue' => $value2
+                                          ]];
+                
         }, []);
         return $diffColl;
 
 }
-
-function makeDiff(string $key, array $collection1, array $collection2)
-{
-    $existInCollection1 = array_key_exists($key, $collection1);
-    $existInCollection2 = array_key_exists($key, $collection2);
-    if (!$existInCollection1) {
-        return getDiffForOnlySecondExistValue($collection2[$key]);
-    }
-    if (!$existInCollection2) {
-        return getDiffForOnlyFirstExistValue($collection1[$key]);
-    }
-    return getDiffForBothExistsValues($collection1[$key], $collection2[$key]);
-}
-
-function getDiffForBothExistsValues(mixed $value1, mixed $value2)
-{
-        $valueIsArray1 = is_array($value1);
-        $valueIsArray2 = is_array($value2);
-    if ($valueIsArray1 && $valueIsArray2) {
-                $diffByColl = makeDiffCollection($value1, $value2);
-                $diff  = [
-                            'diffStatus' => DiffStatus::parentDiffNode,
-                            'Child' => $diffByColl,
-                        ];
-    } elseif (!$valueIsArray1 && !$valueIsArray2) {
-        if ($value1 === $value2) {
-                $diff  = [
-                        'diffStatus' => DiffStatus::noDifference,
-                        'value' => $value1,
-                ];
-        } else {
-                $diff  = [
-                        'diffStatus' => DiffStatus::updated,
-                        'value' => $value1,
-                        'newValue' => $value2,
-                ];
-        }
-    } else {
-                $diff  = [
-                          'diffStatus' => DiffStatus::updated,
-                          'value' => $value1,
-                          'newValue' => $value2,
-                ];
-    }
-        return $diff;
-}
-
-
-
-function getDiffForOnlyFirstExistValue(mixed $leftValue)
-{
-        $diff  = [
-                   'diffStatus' => DiffStatus::removed,
-                   'value' => $leftValue,
-                ];
-        return $diff;
-}
-
-function getDiffForOnlySecondExistValue(mixed $rightValue)
-{
-        $diff = [
-                'diffStatus' => DiffStatus::added,
-                'newValue' => $rightValue,
-        ];
-        return $diff;
-}
-
 
 function getUniqueKeys(array $Collection1, array $Collection2)
 {
