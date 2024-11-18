@@ -5,32 +5,25 @@ namespace Differ\Formatters\StylishFormatter;
 use  Differ\DifferStatus\DiffStatus;
 use Exception;
 
-use function Differ\Differ\getDiffStatus;
-use function Differ\Differ\getValue;
-use function Differ\Differ\getNewValue;
-use function Differ\Differ\getChild;
-use function Differ\Differ\isFirstValueComplex;
-use function Differ\Differ\isSecondValueComplex;
-
 function stylishDumpDiffCol(array $diffCol, int $debt = 1)
 {
     $keys = array_keys($diffCol);
     $formatted = array_reduce($keys, function ($acc, $key) use ($debt, $diffCol) {
-            $margin = getMarginLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
+            $margin = getOffsetLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
             $formattedDiff = stylishDumpDiff($key, $diffCol[$key], $debt);
             $newAcc  = $acc . $formattedDiff;
             return $newAcc;
     }, '');
 
-    $braceMargin = getMarginLeft(($debt - 1), STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_BRACES);
-    return "{\n" . $formatted . $braceMargin  . "}\n";
+    $braceOffset = getOffsetLeft(($debt - 1), STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_BRACES);
+    return "{\n" . $formatted . $braceOffset  . "}\n";
 }
 
 const STYLISH_SPACE_PER_LEVEL = 4;
 const STYLISH_OFFSET_TO_LEFT_PROPERTIES = 2;
 const STYLISH_OFFSET_TO_LEFT_BRACES = 0;
 
-function getMarginLeft(int $debt, int $spaceCountPerLevel, int $offsetToLeft)
+function getOffsetLeft(int $debt, int $spaceCountPerLevel, int $offsetToLeft)
 {
     $repeatCount = $debt * $spaceCountPerLevel - $offsetToLeft;
     return str_repeat(" ", $repeatCount);
@@ -43,8 +36,8 @@ const STYLISH_NO_DIFFERENCE = '  ';
 
 function stylishDumpDiff(string $key, array $diff, int $debt)
 {
-    $margin = getMarginLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
-    $diffStatus = getDiffStatus($diff);
+    $margin = getOffsetLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
+    $diffStatus = $diff['diffStatus'];
     $stylishKeyToAdded = $margin . STYLISH_ADDDED . $key  . ": ";
     $stylishKeyToRemoved = $margin . STYLISH_REMOVED . $key  . ": ";
     $stylishKeyNoDifference = $margin . STYLISH_NO_DIFFERENCE . $key  . ": ";
@@ -64,7 +57,7 @@ function stylishDumpDiff(string $key, array $diff, int $debt)
             $stylishNewValue = getFormattedNewValue($diff, $debt)  . getSymbolAfterNewValue($diff);
             return $stylishKeyToRemoved . $stylishValue . $stylishKeyToAdded . $stylishNewValue;
         case DiffStatus::parentDiffNode:
-            $child = getChild($diff);
+            $child = $diff['child'];
             return $stylishKeyNoDifference . stylishDumpDiffCol($child, ($debt + 1));
         default:
             return '';
@@ -73,27 +66,25 @@ function stylishDumpDiff(string $key, array $diff, int $debt)
 
 function getSymbolAfterValue(array $diff)
 {
-    $result = isFirstValueComplex($diff) ? '' : "\n";
-    return $result;
+    return is_array($diff['value']) ? '' : "\n";
 }
 
 function getSymbolAfterNewValue(array $diff)
 {
-    $result = isSecondValueComplex($diff) ? '' : "\n";
-    return $result;
+    return is_array($diff['newValue']) ? '' : "\n";
 }
 
 function getFormattedValue(array $diff, int $debt)
 {
-    $value = getValue($diff);
-    $isValueComplex = isFirstValueComplex($diff);
+    $value = $diff['value'];
+    $isValueComplex = is_array($value);
     return formatToStylish($value, $isValueComplex, $debt);
 }
 
 function getFormattedNewValue(array $diff, int $debt)
 {
-    $NewValue = getNewValue($diff);
-    $isNewValueComplex = isSecondValueComplex($diff);
+    $NewValue = $diff['newValue'];
+    $isNewValueComplex = is_array($NewValue);
     return formatToStylish($NewValue, $isNewValueComplex, $debt);
 }
 
@@ -109,9 +100,9 @@ function formatToStylish(mixed $value, bool $isComplexValue, int $debt)
 function getStylishFromComplexValue(array $complexValue, int $debt)
 {
         $keys = array_keys($complexValue);
-        $braceMargin = getMarginLeft(($debt - 1), STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_BRACES);
+        $braceOffset = getOffsetLeft(($debt - 1), STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_BRACES);
         $elements = array_reduce($keys, function ($acc, $key) use ($complexValue, $debt) {
-                $margin = getMarginLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
+                $margin = getOffsetLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
                 $ValueIsArray = is_array($complexValue[$key]);
                 $value = formatToStylish($complexValue[$key], $ValueIsArray, ($debt));
                 $spaceBeforeValue = mb_strlen($value) > 0 ? ' ' : '';
@@ -119,7 +110,7 @@ function getStylishFromComplexValue(array $complexValue, int $debt)
                 $newAcc = $acc . $margin . '  ' . $key . ":" . $spaceBeforeValue . $value . $symbolAfterValue;
                 return $newAcc;
         }, '');
-        $output =  "{\n" . $elements . $braceMargin  . "}\n";
+        $output =  "{\n" . $elements . $braceOffset  . "}\n";
         return $output;
 }
 

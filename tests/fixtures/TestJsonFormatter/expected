@@ -1,7 +1,7 @@
 {
     "common": {
         "diffStatus": "parentDiffNode",
-        "Child": {
+        "child": {
             "follow": {
                 "diffStatus": "added",
                 "newValue": false
@@ -31,10 +31,10 @@
             },
             "setting6": {
                 "diffStatus": "parentDiffNode",
-                "Child": {
+                "child": {
                     "doge": {
                         "diffStatus": "parentDiffNode",
-                        "Child": {
+                        "child": {
                             "wow": {
                                 "diffStatus": "updated",
                                 "value": "",
@@ -56,7 +56,7 @@
     },
     "group1": {
         "diffStatus": "parentDiffNode",
-        "Child": {
+        "child": {
             "baz": {
                 "diffStatus": "updated",
                 "value": "bas",

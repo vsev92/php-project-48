@@ -14,20 +14,16 @@ enum SourceType
 
 const JSON_DECODE_ASSOC = true;
 
-function parseFromFile(string $filePath, SourceType $sourceFileType)
+function parseFromFile(string $sourceData, SourceType $sourceFileType)
 {
-    if (file_exists($filePath)) {
-        $data = file_get_contents($filePath);
-        switch ($sourceFileType) {
-            case SourceType::json:
-                return json_decode((string)$data, JSON_DECODE_ASSOC);
-            case SourceType::yaml:
-                return Yaml::parse((string)$data);
-            default:
-                throw new InvalidArgumentException('wrong file extension' . $filePath);
-        }
-    } else {
-        throw new InvalidArgumentException('wrong filename ' . $filePath);
+
+    switch ($sourceFileType) {
+        case SourceType::json:
+            return json_decode($sourceData, JSON_DECODE_ASSOC);
+        case SourceType::yaml:
+            return Yaml::parse($sourceData);
+        default:
+            throw new Exception('unsupported file type');
     }
 }
 

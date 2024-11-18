@@ -5,11 +5,6 @@ namespace Differ\Formatters\PlainFormatter;
 use  Differ\DifferStatus\DiffStatus;
 use Exception;
 
-use function Differ\Differ\getDiffStatus;
-use function Differ\Differ\getValue;
-use function Differ\Differ\getNewValue;
-use function Differ\Differ\getChild;
-
 function plainDumpDiffCol(array $diffCol, string $name = '')
 {
     $keys = array_keys($diffCol);
@@ -24,24 +19,24 @@ function plainDumpDiffCol(array $diffCol, string $name = '')
 
 function plainDumpDiff(array $diff, string $propertyName)
 {
-    $diffStatus = getDiffStatus($diff);
+    $diffStatus = $diff['diffStatus'];
     switch ($diffStatus) {
         case DiffStatus::noDifference:
             return '';
         case DiffStatus::added:
-            $newValue = getNewValue($diff);
+            $newValue = $diff['newValue'];
             $formattedNewValue = getPlainValueEncode($newValue);
             return "Property '{$propertyName}' was added with value: {$formattedNewValue}\n";
         case DiffStatus::removed:
             return "Property '{$propertyName}' was removed\n";
         case DiffStatus::updated:
-            $value  = getValue($diff);
+            $value = $diff['value'];
             $formattedValue  = getPlainValueEncode($value);
-            $newValue = getNewValue($diff);
+            $newValue = $diff['newValue'];
             $formattedNewValue = getPlainValueEncode($newValue);
             return "Property '{$propertyName}' was updated. From {$formattedValue} to {$formattedNewValue}\n";
         case DiffStatus::parentDiffNode:
-            $child = getChild($diff);
+            $child = $diff['child'];
             return plainDumpDiffCol($child, $propertyName);
         default:
             return '';

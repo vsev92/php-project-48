@@ -2,8 +2,6 @@
 
 namespace Differ\DifferStatus;
 
-
-
 enum DiffStatus: string
 {
     case added = 'added';
@@ -12,4 +10,3 @@ enum DiffStatus: string
     case noDifference = 'noDifference';
     case parentDiffNode = 'parentDiffNode';
 }
-
