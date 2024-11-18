@@ -2,9 +2,8 @@
 
 namespace Differ\Differ;
 
-use  Differ\Parser\SourceType;
-use  Symfony\Component\Yaml\Yaml;
 use  Exception;
+use  Differ\DifferStatus\DiffStatus;
 
 use function Functional\sort;
 use function Differ\Parsers\getSourceType;
@@ -31,46 +30,33 @@ function makeDiffCollection(array $collection1, array $collection2)
                 return $newAcc;
         }, []);
         return $diffColl;
+
 }
 
 function makeDiff(string $key, array $collection1, array $collection2)
 {
-    $ExistInCollection1 = array_key_exists($key, $collection1);
-    $ExistInCollection2 = array_key_exists($key, $collection2);
-    $ValueIsArray1 = $ExistInCollection1 && is_array($collection1[$key]);
-    $ValueIsArray2 = $ExistInCollection2 && is_array($collection2[$key]);
-    if ($ExistInCollection1 && $ExistInCollection2) {
-        return getDiffForBothExistsValues($collection1[$key], $collection2[$key]);
-    } else {
-        if (!$ExistInCollection1) {
-                return getDiffForOnlySecondExistValue($collection2[$key]);
-        }
-        if (!$ExistInCollection2) {
-                return getDiffForOnlyFirstExistValue($collection1[$key]);
-        }
+    $existInCollection1 = array_key_exists($key, $collection1);
+    $existInCollection2 = array_key_exists($key, $collection2);
+    if (!$existInCollection1) {
+        return getDiffForOnlySecondExistValue($collection2[$key]);
     }
-}
-
-enum DiffStatus: string
-{
-    case added = 'added';
-    case removed = 'removed';
-    case updated = 'updated';
-    case noDifference = 'noDifference';
-    case parentDiffNode = 'parentDiffNode';
+    if (!$existInCollection2) {
+        return getDiffForOnlyFirstExistValue($collection1[$key]);
+    }
+    return getDiffForBothExistsValues($collection1[$key], $collection2[$key]);
 }
 
 function getDiffForBothExistsValues(mixed $value1, mixed $value2)
 {
-        $ValueIsArray1 = is_array($value1);
-        $ValueIsArray2 = is_array($value2);
-    if ($ValueIsArray1 && $ValueIsArray2) {
+        $valueIsArray1 = is_array($value1);
+        $valueIsArray2 = is_array($value2);
+    if ($valueIsArray1 && $valueIsArray2) {
                 $diffByColl = makeDiffCollection($value1, $value2);
                 $diff  = [
                             'diffStatus' => DiffStatus::parentDiffNode,
                             'Child' => $diffByColl,
                         ];
-    } elseif (!$ValueIsArray1 && !$ValueIsArray2) {
+    } elseif (!$valueIsArray1 && !$valueIsArray2) {
         if ($value1 === $value2) {
                 $diff  = [
                         'diffStatus' => DiffStatus::noDifference,
@@ -97,7 +83,6 @@ function getDiffForBothExistsValues(mixed $value1, mixed $value2)
 
 function getDiffForOnlyFirstExistValue(mixed $leftValue)
 {
-        $ValueIsArray = is_array($leftValue);
         $diff  = [
                    'diffStatus' => DiffStatus::removed,
                    'value' => $leftValue,
@@ -107,7 +92,6 @@ function getDiffForOnlyFirstExistValue(mixed $leftValue)
 
 function getDiffForOnlySecondExistValue(mixed $rightValue)
 {
-        $valueIsArray = is_array($rightValue);
         $diff = [
                 'diffStatus' => DiffStatus::added,
                 'newValue' => $rightValue,

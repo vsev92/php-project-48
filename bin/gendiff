@@ -9,10 +9,6 @@ if (file_exists($autoloadPath1)) {
     require_once $autoloadPath2;
 }
 
-
-
-//$docPath = __DIR__ . '/../README.md';
-//$doc = file_get_contents($docPath);
 $doc = <<<DOC
 Usage:
   gendiff (-h|--help)

@@ -10,7 +10,6 @@ enum SourceType
 {
     case json;
     case yaml;
-    case unsupported;
 }
 
 const JSON_DECODE_ASSOC = true;
@@ -34,11 +33,16 @@ function parseFromFile(string $filePath, SourceType $sourceFileType)
 
 function getSourceType(string $filePath)
 {
-    if (str_ends_with($filePath, '.json')) {
-        return SourceType::json;
-    } elseif (str_ends_with($filePath, '.yml') || str_ends_with($filePath, '.yaml')) {
-        return SourceType::yaml;
-    } else {
-        throw new Exception('Unsupported file type' . $filePath);
+    $pathInfo = pathinfo($filePath);
+    $extension = $pathInfo['extension'];
+    switch ($extension) {
+        case 'json':
+            return SourceType::json;
+        case 'yaml':
+            return SourceType::yaml;
+        case 'yml':
+            return SourceType::yaml;
+        default:
+            throw new InvalidArgumentException('wrong file extension' . $filePath);
     }
 }

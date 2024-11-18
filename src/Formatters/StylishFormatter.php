@@ -2,7 +2,7 @@
 
 namespace Differ\Formatters\StylishFormatter;
 
-use Differ\Differ\DiffStatus;
+use  Differ\DifferStatus\DiffStatus;
 use Exception;
 
 use function Differ\Differ\getDiffStatus;

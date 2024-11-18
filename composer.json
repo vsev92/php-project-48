@@ -25,6 +25,7 @@
         "files": [
                     "src/Parsers.php",
                     "src/Differ.php",
+                    "src/DifferStatus.php",
                     "src/Formatters.php",
                     "src/Formatters/PlainFormatter.php",
                     "src/Formatters/StylishFormatter.php",
