@@ -6,9 +6,30 @@ use  Exception;
 use  Differ\DifferStatus\DiffStatus;
 
 use function Functional\sort;
-use function Differ\Parsers\getSourceType;
-use function Differ\Parsers\parseFromFile;
+use function Differ\Parsers\parse;
 use function Differ\Formatters\getFormattedDiffCol;
+
+enum SourceType
+{
+    case json;
+    case yaml;
+}
+
+function getSourceType(string $filePath)
+{
+    $pathInfo = pathinfo($filePath);
+    $extension = $pathInfo['extension'];
+    switch ($extension) {
+        case 'json':
+            return SourceType::json;
+        case 'yaml':
+            return SourceType::yaml;
+        case 'yml':
+            return SourceType::yaml;
+        default:
+            throw new InvalidArgumentException('wrong file extension' . $filePath);
+    }
+}
 
 function readSourceData($filePath)
 {
@@ -25,8 +46,8 @@ function genDiff(string $pathToFile1, string $pathToFile2, string $formatName = 
         $sourceType2 = getSourceType($pathToFile2);
         $sourceData1 = readSourceData($pathToFile1);
         $sourceData2 = readSourceData($pathToFile2);
-        $collection1 = parseFromFile($sourceData1, $sourceType1);
-        $collection2  = parseFromFile($sourceData2, $sourceType2);
+        $collection1 = parse($sourceData1, $sourceType1);
+        $collection2  = parse($sourceData2, $sourceType2);
         $diffCol = makeDiffCollection($collection1, $collection2);
         return getFormattedDiffCol($diffCol, $formatName);
 }
