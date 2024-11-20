@@ -2,7 +2,7 @@
 
 namespace Differ\Differ;
 
-use  Exception;
+use  InvalidArgumentException;
 use  Differ\DifferStatus\DiffStatus;
 
 use function Functional\sort;
@@ -18,7 +18,7 @@ enum SourceType
 function getSourceType(string $filePath)
 {
     $pathInfo = pathinfo($filePath);
-    $extension = $pathInfo['extension'];
+    $extension = $pathInfo['extension'] ?? 'noExtension';
     switch ($extension) {
         case 'json':
             return SourceType::json;
@@ -31,7 +31,7 @@ function getSourceType(string $filePath)
     }
 }
 
-function readSourceData($filePath)
+function readSourceData(string $filePath)
 {
     if (file_exists($filePath)) {
         return file_get_contents($filePath);
