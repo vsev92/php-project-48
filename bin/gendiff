@@ -29,7 +29,7 @@ $pathToFile2 = $args['<secondFile>'];
 $formatName = $args['--format'];
 
 
-$diff = Differ\Differ\gendiff($pathToFile1, $pathToFile2, $formatName);
+$diff = Differ\Differ\genDiff($pathToFile1, $pathToFile2, $formatName);
 
 print_r($diff);
 

@@ -4,34 +4,31 @@ namespace Differ\Differ;
 
 use  InvalidArgumentException;
 use  Differ\DifferStatus\DiffStatus;
+use  Differ\FileFormat\FileFormat;
 
 use function Functional\sort;
 use function Differ\Parsers\parse;
 use function Differ\Formatters\getFormattedDiffCol;
 
-enum SourceType
-{
-    case json;
-    case yaml;
-}
-
-function getSourceType(string $filePath)
+function getDataFormat(string $filePath)
 {
     $pathInfo = pathinfo($filePath);
-    $extension = $pathInfo['extension'] ?? 'noExtension';
-    switch ($extension) {
-        case 'json':
-            return SourceType::json;
-        case 'yaml':
-            return SourceType::yaml;
-        case 'yml':
-            return SourceType::yaml;
-        default:
-            throw new InvalidArgumentException('wrong file extension' . $filePath);
+    if (isset($pathInfo['extension'])) {
+        $extension = $pathInfo['extension'];
+        switch ($extension) {
+            case 'json':
+                return FileFormat::json;
+            case 'yaml' || 'yml':
+                return FileFormat::yaml;
+            default:
+                throw new InvalidArgumentException('wrong file extension' . $filePath);
+        }
+    } else {
+        throw new InvalidArgumentException('input file without extension' . $filePath);
     }
 }
 
-function readSourceData(string $filePath)
+function getData(string $filePath)
 {
     if (file_exists($filePath)) {
         return file_get_contents($filePath);
@@ -42,12 +39,12 @@ function readSourceData(string $filePath)
 
 function genDiff(string $pathToFile1, string $pathToFile2, string $formatName = 'stylish')
 {
-        $sourceType1 = getSourceType($pathToFile1);
-        $sourceType2 = getSourceType($pathToFile2);
-        $sourceData1 = readSourceData($pathToFile1);
-        $sourceData2 = readSourceData($pathToFile2);
-        $collection1 = parse($sourceData1, $sourceType1);
-        $collection2  = parse($sourceData2, $sourceType2);
+        $FileFormat1 = getDataFormat($pathToFile1);
+        $FileFormat2 = getDataFormat($pathToFile2);
+        $sourceData1 = getData($pathToFile1);
+        $sourceData2 = getData($pathToFile2);
+        $collection1 = parse($sourceData1, $FileFormat1);
+        $collection2  = parse($sourceData2, $FileFormat2);
         $diffCol = makeDiffCollection($collection1, $collection2);
         return getFormattedDiffCol($diffCol, $formatName);
 }

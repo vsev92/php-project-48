@@ -3,21 +3,17 @@
 namespace Differ\Parsers;
 
 use Symfony\Component\Yaml\Yaml;
-use  Differ\Differ\SourceType;
+use  Differ\FileFormat\FileFormat;
 use InvalidArgumentException;
 use Exception;
 
-const JSON_DECODE_ASSOC = true;
-
-function parse(string $sourceData, SourceType $sourceFileType)
+function parse(string $data, FileFormat $format)
 {
 
-    switch ($sourceFileType) {
-        case SourceType::json:
-            return json_decode($sourceData, JSON_DECODE_ASSOC);
-        case SourceType::yaml:
-            return Yaml::parse($sourceData);
-        default:
-            throw new Exception('unsupported file type');
+    switch ($format) {
+        case FileFormat::json:
+            return json_decode($data, true);
+        case FileFormat::yaml:
+            return Yaml::parse($data);
     }
 }

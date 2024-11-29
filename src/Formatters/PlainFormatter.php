@@ -39,7 +39,7 @@ function plainDumpDiff(array $diff, string $propertyName)
             $child = $diff['child'];
             return plainDumpDiffCol($child, $propertyName);
         default:
-            return '';
+            throw new Exception('Default diffStatus');
     }
 }
 

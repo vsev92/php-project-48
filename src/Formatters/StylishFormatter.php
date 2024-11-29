@@ -5,42 +5,40 @@ namespace Differ\Formatters\StylishFormatter;
 use  Differ\DifferStatus\DiffStatus;
 use Exception;
 
+const COUNT_SPACE_PER_LEVEL = 4;
+const OFFSET_TO_LEFT_PROPERTIES = 2;
+const OFFSET_TO_LEFT_BRACES = 0;
+const SYMBOL_ADD = '+ ';
+const SYMBOL_REMOVE = '- ';
+const SYMBOL_NO_DIFFERENCE = '  ';
+
 function stylishDumpDiffCol(array $diffCol, int $debt = 1)
 {
     $keys = array_keys($diffCol);
     $formatted = array_reduce($keys, function ($acc, $key) use ($debt, $diffCol) {
-            $margin = getOffsetLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
             $formattedDiff = stylishDumpDiff($key, $diffCol[$key], $debt);
             $newAcc  = $acc . $formattedDiff;
             return $newAcc;
     }, '');
 
-    $braceOffset = getOffsetLeft(($debt - 1), STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_BRACES);
+    $braceOffset = getOffsetLeft(($debt - 1), COUNT_SPACE_PER_LEVEL, OFFSET_TO_LEFT_BRACES);
     return "{\n" . $formatted . $braceOffset  . "}\n";
 }
 
-const STYLISH_SPACE_PER_LEVEL = 4;
-const STYLISH_OFFSET_TO_LEFT_PROPERTIES = 2;
-const STYLISH_OFFSET_TO_LEFT_BRACES = 0;
 
 function getOffsetLeft(int $debt, int $spaceCountPerLevel, int $offsetToLeft)
 {
     $repeatCount = $debt * $spaceCountPerLevel - $offsetToLeft;
-    return str_repeat(" ", $repeatCount);
+    return str_repeat(' ', $repeatCount);
 }
-
-const STYLISH_ADDDED = '+ ';
-const STYLISH_REMOVED = '- ';
-const STYLISH_NO_DIFFERENCE = '  ';
-
 
 function stylishDumpDiff(string $key, array $diff, int $debt)
 {
-    $margin = getOffsetLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
+    $margin = getOffsetLeft($debt, COUNT_SPACE_PER_LEVEL, OFFSET_TO_LEFT_PROPERTIES);
     $diffStatus = $diff['diffStatus'];
-    $stylishKeyToAdded = $margin . STYLISH_ADDDED . $key  . ": ";
-    $stylishKeyToRemoved = $margin . STYLISH_REMOVED . $key  . ": ";
-    $stylishKeyNoDifference = $margin . STYLISH_NO_DIFFERENCE . $key  . ": ";
+    $stylishKeyToAdded = $margin . SYMBOL_ADD . $key  . ': ';
+    $stylishKeyToRemoved = $margin . SYMBOL_REMOVE . $key  . ': ';
+    $stylishKeyNoDifference = $margin . SYMBOL_NO_DIFFERENCE . $key  . ': ';
 
     switch ($diffStatus) {
         case DiffStatus::noDifference:
@@ -100,14 +98,14 @@ function formatToStylish(mixed $value, bool $isComplexValue, int $debt)
 function getStylishFromComplexValue(array $complexValue, int $debt)
 {
         $keys = array_keys($complexValue);
-        $braceOffset = getOffsetLeft(($debt - 1), STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_BRACES);
+        $braceOffset = getOffsetLeft(($debt - 1), COUNT_SPACE_PER_LEVEL, OFFSET_TO_LEFT_BRACES);
         $elements = array_reduce($keys, function ($acc, $key) use ($complexValue, $debt) {
-                $margin = getOffsetLeft($debt, STYLISH_SPACE_PER_LEVEL, STYLISH_OFFSET_TO_LEFT_PROPERTIES);
+                $margin = getOffsetLeft($debt, COUNT_SPACE_PER_LEVEL, OFFSET_TO_LEFT_PROPERTIES);
                 $ValueIsArray = is_array($complexValue[$key]);
                 $value = formatToStylish($complexValue[$key], $ValueIsArray, ($debt));
                 $spaceBeforeValue = mb_strlen($value) > 0 ? ' ' : '';
                 $symbolAfterValue = $ValueIsArray ? '' : "\n";
-                $newAcc = $acc . $margin . '  ' . $key . ":" . $spaceBeforeValue . $value . $symbolAfterValue;
+                $newAcc = $acc . $margin . '  ' . $key . ':' . $spaceBeforeValue . $value . $symbolAfterValue;
                 return $newAcc;
         }, '');
         $output =  "{\n" . $elements . $braceOffset  . "}\n";
@@ -118,10 +116,10 @@ function getStylishValueEncode(mixed $value)
 {
     $type = gettype($value);
     switch ($type) {
-        case "boolean":
-            return (bool)$value ? "true" : "false";
-        case "NULL":
-            return "null";
+        case 'boolean':
+            return (bool)$value ? 'true' : 'false';
+        case 'NULL':
+            return 'null';
         default:
             return  $value;
     }
