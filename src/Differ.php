@@ -14,11 +14,11 @@ function getDataFormat(string $filePath)
 {
     $pathInfo = pathinfo($filePath);
     if (isset($pathInfo['extension'])) {
-        $extension = $pathInfo['extension'];
+        $extension = $pathInfo['extension'] === 'yml' ? 'yaml' : $pathInfo['extension'];
         switch ($extension) {
             case 'json':
                 return FileFormat::json;
-            case 'yaml' || 'yml':
+            case 'yaml':
                 return FileFormat::yaml;
             default:
                 throw new InvalidArgumentException('wrong file extension' . $filePath);
