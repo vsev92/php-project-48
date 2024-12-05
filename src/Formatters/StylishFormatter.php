@@ -3,7 +3,6 @@
 namespace Differ\Formatters\StylishFormatter;
 
 use  Differ\DifferStatus\DiffStatus;
-use Exception;
 
 const COUNT_SPACE_PER_LEVEL = 4;
 const OFFSET_TO_LEFT_PROPERTIES = 2;

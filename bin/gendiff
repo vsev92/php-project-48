@@ -21,7 +21,7 @@ Options:
   --format <fmt>                Report format [default: stylish]
 
 DOC;
-$handler = new \Docopt\Handler(array('help'=>true,'version'=>"1.0.0"));
+$handler = new \Docopt\Handler(['help'=>true,'version'=>"1.0.0"]);
 $args = $handler->handle($doc);
 
 $pathToFile1 = $args['<firstFile>'];
@@ -32,8 +32,4 @@ $formatName = $args['--format'];
 $diff = Differ\Differ\genDiff($pathToFile1, $pathToFile2, $formatName);
 
 print_r($diff);
-
-
-
-
   

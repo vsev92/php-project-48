@@ -14,27 +14,27 @@ function getDataFormat(string $filePath)
 {
     $pathInfo = pathinfo($filePath);
     if (isset($pathInfo['extension'])) {
-        $extension = $pathInfo['extension'] === 'yml' ? 'yaml' : $pathInfo['extension'];
-        switch ($extension) {
+        switch ($pathInfo['extension']) {
             case 'json':
                 return FileFormat::json;
+            case 'yml':
             case 'yaml':
                 return FileFormat::yaml;
             default:
                 throw new InvalidArgumentException('wrong file extension' . $filePath);
         }
-    } else {
-        throw new InvalidArgumentException('input file without extension' . $filePath);
     }
+
+    throw new InvalidArgumentException('input file without extension' . $filePath);
 }
 
 function getData(string $filePath)
 {
     if (file_exists($filePath)) {
         return file_get_contents($filePath);
-    } else {
-        throw new InvalidArgumentException('wrong filename ' . $filePath);
     }
+
+    throw new InvalidArgumentException('wrong filename ' . $filePath);
 }
 
 function genDiff(string $pathToFile1, string $pathToFile2, string $formatName = 'stylish')
